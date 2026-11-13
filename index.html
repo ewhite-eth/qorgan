@@ -1,0 +1,675 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Qorǵan Clinic Desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4F6FA; --surface:#FFFFFF; --ink:#0B1530; --muted:#3A4560; --line:#9AA5BD;
+  --brand:#14235A; --brand-ink:#FFFFFF; --focus:#B45309;
+  --ok:#0B6B3A; --ok-bg:#DDF2E6; --warn:#7A4100; --warn-bg:#FCEBD0; --bad:#9B111E; --bad-bg:#FADADD;
+  --info:#123E8C; --info-bg:#DCE7FA; --sample:#5B2A86; --sample-bg:#EDE2F7;
+  --fs:18px; --radius:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0B1020; --surface:#161D33; --ink:#F3F6FF; --muted:#C9D1E6; --line:#56607C;
+    --brand:#9DB4FF; --brand-ink:#0B1020; --focus:#FFB45C;
+    --ok:#7FE0A8; --ok-bg:#103A26; --warn:#FFC77A; --warn-bg:#3E2A0C; --bad:#FF9BA4; --bad-bg:#45141B;
+    --info:#A9C4FF; --info-bg:#162B55; --sample:#D8B8FF; --sample-bg:#33204A;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0B1020; --surface:#161D33; --ink:#F3F6FF; --muted:#C9D1E6; --line:#56607C;
+  --brand:#9DB4FF; --brand-ink:#0B1020; --focus:#FFB45C;
+  --ok:#7FE0A8; --ok-bg:#103A26; --warn:#FFC77A; --warn-bg:#3E2A0C; --bad:#FF9BA4; --bad-bg:#45141B;
+  --info:#A9C4FF; --info-bg:#162B55; --sample:#D8B8FF; --sample-bg:#33204A;
+}
+:root.big{--fs:23px}
+*{box-sizing:border-box}
+html{font-size:var(--fs)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Source Sans 3",system-ui,sans-serif;line-height:1.45}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--info)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+header.top{background:var(--brand);color:var(--brand-ink)}
+header.top .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding-top:12px;padding-bottom:12px}
+.logo{font-weight:800;font-size:1.35rem;letter-spacing:.01em;margin-right:auto}
+.logo small{display:block;font-weight:600;font-size:.8rem;opacity:.95}
+.tbtn{background:transparent;border:2px solid currentColor;color:inherit;border-radius:999px;padding:6px 14px;font-weight:700;cursor:pointer;min-height:44px}
+.tbtn[aria-pressed="true"]{background:var(--brand-ink);color:var(--brand)}
+nav.tabs{background:var(--surface);border-bottom:2px solid var(--line)}
+nav.tabs .wrap{display:flex;flex-wrap:wrap;gap:4px;padding-top:6px;padding-bottom:0}
+nav.tabs button{border:0;background:none;padding:10px 14px;font-weight:700;color:var(--muted);border-bottom:4px solid transparent;cursor:pointer;min-height:44px}
+nav.tabs button[aria-current="page"]{color:var(--ink);border-bottom-color:var(--brand)}
+main{padding:20px 0 60px}
+h1{font-size:1.7rem;margin:.2em 0 .4em;line-height:1.2}
+h2{font-size:1.3rem;margin:1.2em 0 .5em}
+h3{font-size:1.08rem;margin:.8em 0 .3em}
+p{margin:.4em 0}
+.card{background:var(--surface);border:2px solid var(--line);border-radius:var(--radius);padding:18px;margin:0 0 16px}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.role{display:block;text-align:left;width:100%;background:var(--surface);border:2px solid var(--line);border-radius:var(--radius);padding:16px;cursor:pointer;min-height:44px}
+.role:hover,.role:focus-visible{border-color:var(--brand)}
+.role strong{display:block;font-size:1.15rem}
+.role span{color:var(--muted)}
+label{display:block;font-weight:700;margin:14px 0 6px}
+.hint{color:var(--muted);font-size:.92rem;font-weight:400}
+input[type=text],input[type=password],input[type=number],input[type=date],select,textarea{width:100%;padding:10px 12px;border:2px solid var(--line);border-radius:8px;background:var(--surface);min-height:44px}
+textarea{min-height:90px;resize:vertical}
+fieldset{border:0;padding:0;margin:14px 0 0}
+legend{font-weight:700;margin-bottom:6px;padding:0}
+.choices{display:flex;flex-wrap:wrap;gap:8px}
+.choice{position:relative}
+.choice input{position:absolute;opacity:0;width:1px;height:1px}
+.choice span{display:inline-block;border:2px solid var(--line);border-radius:8px;padding:8px 14px;cursor:pointer;background:var(--surface);min-height:44px;line-height:1.5}
+.choice input:checked+span{background:var(--brand);color:var(--brand-ink);border-color:var(--brand)}
+.choice input:focus-visible+span{outline:3px solid var(--focus);outline-offset:2px}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.btn{background:var(--brand);color:var(--brand-ink);border:2px solid var(--brand);border-radius:8px;padding:10px 18px;font-weight:700;cursor:pointer;min-height:44px}
+.btn.secondary{background:var(--surface);color:var(--ink);border-color:var(--line)}
+.btn.ok{background:var(--ok);border-color:var(--ok);color:var(--surface)}
+.btn.bad{background:var(--surface);color:var(--bad);border-color:var(--bad)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.err{color:var(--bad);font-weight:700;margin-top:6px}
+.notice{border-radius:8px;padding:10px 14px;font-weight:600;margin:0 0 14px;border:2px solid}
+.n-info{background:var(--info-bg);color:var(--info);border-color:var(--info)}
+.n-warn{background:var(--warn-bg);color:var(--warn);border-color:var(--warn)}
+.n-bad{background:var(--bad-bg);color:var(--bad);border-color:var(--bad)}
+.n-ok{background:var(--ok-bg);color:var(--ok);border-color:var(--ok)}
+.n-sample{background:var(--sample-bg);color:var(--sample);border-color:var(--sample)}
+.pill{display:inline-block;border-radius:999px;padding:2px 12px;font-weight:700;font-size:.9rem;border:2px solid}
+.s-new{background:var(--bad-bg);color:var(--bad)}
+.s-ack{background:var(--warn-bg);color:var(--warn)}
+.s-vendor{background:var(--info-bg);color:var(--info)}
+.s-restored{background:var(--ok-bg);color:var(--ok)}
+.s-closed{background:var(--surface);color:var(--muted)}
+.p-rec{background:var(--warn-bg);color:var(--warn)}
+.p-sample{background:var(--sample-bg);color:var(--sample)}
+.ticket h3{margin-top:0}
+.meta{color:var(--muted);font-size:.95rem}
+ol.tl{list-style:none;padding:0;margin:10px 0}
+ol.tl li{border-left:4px solid var(--line);padding:2px 0 8px 12px;margin-left:6px}
+ol.tl li.done{border-left-color:var(--ok)}
+.kpi{background:var(--surface);border:2px solid var(--line);border-radius:var(--radius);padding:14px}
+.kpi .v{font-size:2.1rem;font-weight:800;line-height:1.1}
+.kpi .l{font-weight:700}
+.kpi .t{color:var(--muted);font-size:.9rem}
+.kpi.good{border-color:var(--ok)} .kpi.good .v{color:var(--ok)}
+.kpi.miss{border-color:var(--bad)} .kpi.miss .v{color:var(--bad)}
+.bar{display:grid;grid-template-columns:minmax(120px,1fr) 3fr auto;gap:10px;align-items:center;margin:6px 0}
+.bar .track{height:22px;background:var(--bg);border:2px solid var(--line);border-radius:6px;overflow:hidden}
+.bar .fill{height:100%;background:var(--brand)}
+table{border-collapse:collapse;width:100%}
+th,td{text-align:left;border-bottom:2px solid var(--line);padding:8px 6px;vertical-align:top}
+th{font-size:.92rem}
+.tablewrap{overflow-x:auto}
+.check{display:flex;gap:10px;align-items:flex-start;margin:6px 0}
+.check input{width:26px;height:26px;flex:none;margin-top:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.task{border:2px solid var(--line);border-radius:8px;padding:12px;margin:10px 0}
+.task .row{margin-top:8px}
+.counter{display:inline-flex;align-items:center;gap:6px}
+.counter button{width:44px}
+.footer{color:var(--muted);font-size:.9rem;margin-top:24px}
+[hidden]{display:none!important}
+@media print{
+  header.top,nav.tabs,.noprint{display:none!important}
+  body{background:#fff;color:#000}
+  .card,.kpi{break-inside:avoid;border-color:#000}
+}
+@media (max-width:560px){h1{font-size:1.4rem}.kpi .v{font-size:1.7rem}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="logo">Qorǵan Clinic Desk<small data-i18n="tagline"></small></div>
+    <button class="tbtn" id="langBtn" type="button" aria-label="Language"></button>
+    <button class="tbtn" id="bigBtn" type="button" aria-pressed="false" data-i18n="bigText"></button>
+    <button class="tbtn" id="roleBtn" type="button" hidden data-i18n="nav.switch"></button>
+  </div>
+</header>
+<nav class="tabs" id="tabs" hidden aria-label="Sections"><div class="wrap" id="tabList"></div></nav>
+<main class="wrap">
+  <div id="modeNote" aria-live="polite"></div>
+  <div id="live" class="sr" aria-live="assertive"></div>
+  <div id="view"></div>
+  <p class="footer" data-i18n="footer"></p>
+</main>
+<script>
+"use strict";
+/* ---------- text ---------- */
+const I18N={
+en:{
+tagline:"One accountable IT contact for your clinic",bigText:"Large text",langSwitch:"Қазақша","nav.switch":"Change role",
+footer:"Final exam MVP, version 2.0. Qorǵan coordinates IT problems and vendors. It does not store patient data.",
+"start.title":"Who is using the desk?","start.lead":"Choose your role. Each role sees only what it needs.",
+"role.admin":"Clinic administrator","role.admin.d":"Report a problem and follow it until it is fixed.",
+"role.analyst":"Qorǵan analyst","role.analyst.d":"Call back, coordinate the vendor, record the fix.",
+"role.director":"Clinic director","role.director.d":"See response times, repeat problems and the pilot decision.",
+"role.test":"User test session","role.test.d":"For the Qorǵan team: record a test with a participant.",
+clinicCode:"Clinic code",pin:"Analyst PIN",enter:"Continue",back:"Back",
+demoNote:"Demo access: clinic code QOR-01, analyst PIN 2416. These are demo codes, not real security.",
+"err.code":"Enter a clinic code like QOR-01 (letters, dash, two digits).","err.pin":"Wrong PIN. Use the demo PIN shown below.",
+"nav.report":"Report a problem","nav.mine":"My problems","nav.map":"Clinic map","nav.queue":"Queue","nav.summary":"Director summary","nav.help":"Help","nav.test":"Test session",
+"q.what":"What is not working?","cat.internet":"Internet or Wi-Fi","cat.mis":"Medical information system (MIS)","cat.device":"Computer, printer or scanner","cat.phone":"Phones or call centre","cat.account":"Login, password or email","cat.other":"Something else",
+"q.scope":"How many people are affected?","scope.one":"One workstation","scope.dept":"One department","scope.all":"Whole clinic",
+"q.patients":"Are patients waiting because of this?",yes:"Yes",no:"No",maybe:"Maybe",
+"q.vendor":"Which company is responsible, if you know?","vendor.unknown":"I don't know",
+"q.desc":"Describe the problem in one or two sentences","privacy":"Do not enter patient names, IIN or diagnoses. Describe only the equipment or system.",
+"q.contact":"Who should we call back? Role and work phone","contact.ph":"Reception desk, +7 7172 ...",
+"q.stress":"How stressful is this for you right now?","stress.low":"1 = calm","stress.high":"5 = very stressed",
+submit:"Send to Qorǵan","err.required":"Please answer this question.","err.desc":"Write at least 10 characters.","err.iin":"This looks like an IIN or another personal number. Please remove it.",
+"err.save":"Could not save. Check the connection and try again. Your text is kept.","err.offline":"You are offline. The problem cannot be sent now. Call the Qorǵan line instead.",
+sent:"Sent. Qorǵan will call you back within 15 minutes during clinic hours (08:00 to 20:00).",chars:"characters left",
+"st.new":"Received","st.ack":"Analyst called back","st.vendor":"With the vendor","st.restored":"Restored, please confirm","st.closed":"Closed",
+recurring:"Repeat problem",sample:"Sample",reported:"Reported",waiting:"Waiting",
+"mine.empty":"No problems reported yet. Use Report a problem when something stops working.",
+"confirm.q":"Is it working again?","confirm.yes":"Yes, it works","confirm.no":"No, still broken",
+"q.stressAfter":"How stressful was it after Qorǵan took over?","q.speed":"Compared with how such problems were solved before, this was:",
+"speed.faster":"Faster","speed.same":"About the same","speed.slower":"Slower","confirm.save":"Confirm and close","reopened":"Reopened. The analyst has been told it still does not work.",
+"queue.empty":"The queue is empty. New problems appear here at once.","queue.lead":"All clinics. Oldest unsolved problem first.",
+"act.ack":"I called back","act.vendor":"Passed to vendor","act.restored":"Service restored",
+"note.ph":"Note for the clinic, visible to the administrator","note.add":"Add note","notes":"Notes",
+"demo.load":"Add labelled sample data","demo.clear":"Remove sample data","demo.done":"Sample tickets added. They are marked Sample and are not evidence.",
+"sum.lead":"Last 30 days. Calculated from real tickets in this desk.","includeSample":"Include sample data","sampleWarn":"This summary includes labelled sample data. Do not use it as evidence.",
+"k.reported":"Problems reported","k.open":"Open now","k.tta":"Median time to call back","k.tta15":"Called back within 15 min","k.mttr":"Median time to restore","k.recurring":"Repeat problems",
+"k.downtime":"Patient-affecting downtime","k.avail":"Availability in clinic hours","k.stress":"Administrator stress, before to after","k.faster":"Rated faster than before",
+target:"Target",min:"min",none:"no data",
+"byVendor":"Problems by responsible company","baseline":"Typical restore time before Qorǵan, minutes (your estimate)","baselineNote":"Target: restore at least 20% faster than this.",
+"check.title":"Readiness checklist","check.done":"done",
+"chk.1":"Admin passwords for the router and MIS are kept by the clinic","chk.2":"Each system has a named vendor and contract end date","chk.3":"Backups run and a restore was tested this quarter","chk.4":"Patient consent forms are stored safely","chk.5":"There is a backup internet connection","chk.6":"Staff know what to do when the MIS is down","chk.7":"Accounts of former employees are disabled","chk.8":"Antivirus and updates are active on all computers","chk.9":"Vendor contacts are written in one place","chk.10":"Findings of the last inspection are closed",
+"dec.title":"Pilot decision","dec.continue":"Continue at 80,000 ₸ per month","dec.more":"Need more time to decide","dec.stop":"Stop after the pilot","dec.reason":"Main reason","dec.save":"Save decision","dec.saved":"Decision saved",
+print:"Print or save as PDF",exportTickets:"Export tickets (CSV)",
+"map.lead":"Every system, the company responsible and how to reach their support. Work contacts only.","v.system":"System","v.vendor":"Company","v.contract":"Contract ends","v.contact":"Support contact (work only)","v.add":"Add to map","v.empty":"No systems recorded yet.","v.remove":"Remove",
+"t.lead":"Use this with one participant at a time. Read the consent text aloud first.","t.code":"Participant code","t.role":"Participant role","t.r.admin":"Administrator","t.r.director":"Director","t.r.staff":"Other clinic staff",
+"t.consent":"The participant agreed to take part and knows that their name and clinic will not be published.","t.tasks":"Tasks",
+"t1":"Report: the internet is down in the whole clinic and patients are waiting.","t2":"Find the status of your problem and read the analyst's note.","t3":"Confirm that the problem is fixed and rate your stress.","t4":"Switch the language and find the 15-minute call-back promise.","t5":"As director: find the median time to restore and the repeat problems.",
+"t.start":"Start","t.done":"Done","t.help":"Done with help","t.fail":"Not done","t.errors":"Errors","t.ease":"Ease, 1 hard to 5 easy","t.use":"Would use it at work?","t.comment":"What was confusing? Write the participant's words","t.save":"Save test record","t.export":"Export test records (CSV)","t.list":"Saved test records","t.saved":"Test record saved",
+"err.consent":"Consent is required before the test.","err.pcode":"Use a code like P01.","err.tasks":"Record a result for at least one task.","t.empty":"No test records yet.",
+"mode.shared":"Shared mode: everyone who opens this link sees the same tickets.","mode.local":"Private demo mode: data is saved only in this browser. Open a second tab as analyst to see live updates.",
+"mode.connecting":"Connecting to the shared database…","mode.cloudFail":"The shared database could not be reached, so data is saved only in this browser for now. Check the internet connection and reload.","mode.switched":"Shared saving is not allowed for this viewer, so the desk switched to private demo mode in this browser.",
+"help.title":"How Qorǵan works",
+"help.1":"The administrator reports a problem in under a minute. The form asks only what the analyst needs.",
+"help.2":"A Qorǵan analyst calls back within 15 minutes during clinic hours, finds the responsible vendor and follows the case until it is fixed.",
+"help.3":"The administrator confirms the fix and rates stress. The director sees measured response and restore times every month.",
+"help.bound":"Service limits","help.b1":"Qorǵan coordinates. Vendors repair their own systems under their contracts.","help.b2":"Call-back target: 90% within 15 minutes, 08:00 to 20:00 on working days.","help.b3":"Qorǵan never asks for or stores patient data.","help.b4":"Liability is limited to the monthly fee. Details are in the service agreement.",
+"help.changes":"What changed since the Assignment 5 prototype",
+"ch.1":"Real workflow: the analyst console now changes the status. The A5 prototype only played a simulated timeline.",
+"ch.2":"Measured indicators: call-back time, restore time, repeat problems and downtime are calculated from ticket times, as the instructor asked.",
+"ch.3":"Stress before and after each problem, to measure the emotional side of the journey.",
+"ch.4":"Kazakh and English on every screen, plus a large-text mode for bright rooms.",
+"ch.5":"Privacy guard: the form blocks 12-digit numbers that look like an IIN."
+},
+kk:{
+tagline:"Клиникаңыздың IT мәселелеріне жауапты бір байланыс",bigText:"Үлкен мәтін",langSwitch:"English","nav.switch":"Рөлді ауыстыру",
+footer:"Қорытынды емтихан MVP, 2.0 нұсқасы. Qorǵan IT мәселелері мен жеткізушілерді үйлестіреді. Пациент деректерін сақтамайды.",
+"start.title":"Жүйені кім қолданады?","start.lead":"Рөліңізді таңдаңыз. Әр рөл тек өзіне керегін көреді.",
+"role.admin":"Клиника әкімшісі","role.admin.d":"Мәселе туралы хабарлап, ол шешілгенше бақылаңыз.",
+"role.analyst":"Qorǵan маманы","role.analyst.d":"Кері қоңырау шалу, жеткізушімен үйлестіру, шешімді тіркеу.",
+"role.director":"Клиника директоры","role.director.d":"Жауап беру уақытын, қайталанған мәселелерді және пилот шешімін көріңіз.",
+"role.test":"Пайдаланушы тестілеуі","role.test.d":"Qorǵan командасы үшін: қатысушымен тестті тіркеу.",
+clinicCode:"Клиника коды",pin:"Маманның PIN-коды",enter:"Жалғастыру",back:"Артқа",
+demoNote:"Демо кіру: клиника коды QOR-01, маманның PIN-коды 2416. Бұл демо кодтар, нақты қорғаныс емес.",
+"err.code":"Клиника кодын QOR-01 түрінде енгізіңіз (әріптер, сызықша, екі сан).","err.pin":"PIN-код қате. Төмендегі демо PIN-кодты пайдаланыңыз.",
+"nav.report":"Мәселе туралы хабарлау","nav.mine":"Менің өтініштерім","nav.map":"Клиника картасы","nav.queue":"Кезек","nav.summary":"Директорға есеп","nav.help":"Анықтама","nav.test":"Тест сессиясы",
+"q.what":"Не істемей тұр?","cat.internet":"Интернет немесе Wi-Fi","cat.mis":"Медициналық ақпараттық жүйе (МАЖ)","cat.device":"Компьютер, принтер немесе сканер","cat.phone":"Телефон немесе call-орталық","cat.account":"Кіру, құпиясөз немесе пошта","cat.other":"Басқа",
+"q.scope":"Қанша адамға әсер етті?","scope.one":"Бір жұмыс орны","scope.dept":"Бір бөлім","scope.all":"Бүкіл клиника",
+"q.patients":"Осыған байланысты пациенттер күтіп тұр ма?",yes:"Иә",no:"Жоқ",maybe:"Мүмкін",
+"q.vendor":"Білсеңіз, қай компания жауапты?","vendor.unknown":"Білмеймін",
+"q.desc":"Мәселені бір-екі сөйлеммен сипаттаңыз","privacy":"Пациенттің аты-жөнін, ЖСН-ін немесе диагнозын жазбаңыз. Тек жабдықты немесе жүйені сипаттаңыз.",
+"q.contact":"Кімге кері қоңырау шалу керек? Лауазымы және жұмыс телефоны","contact.ph":"Тіркеу орны, +7 7172 ...",
+"q.stress":"Қазір бұл жағдай сізге қаншалықты стресс тудырып тұр?","stress.low":"1 = тыныш","stress.high":"5 = қатты стресс",
+submit:"Qorǵan-ға жіберу","err.required":"Бұл сұраққа жауап беріңіз.","err.desc":"Кемінде 10 таңба жазыңыз.","err.iin":"Бұл ЖСН немесе басқа жеке нөмір сияқты. Оны өшіріңіз.",
+"err.save":"Сақтау мүмкін болмады. Байланысты тексеріп, қайталап көріңіз. Мәтініңіз сақталды.","err.offline":"Желі жоқ. Өтінішті қазір жіберу мүмкін емес. Qorǵan желісіне қоңырау шалыңыз.",
+sent:"Жіберілді. Qorǵan жұмыс уақытында (08:00–20:00) 15 минут ішінде кері қоңырау шалады.",chars:"таңба қалды",
+"st.new":"Қабылданды","st.ack":"Маман кері қоңырау шалды","st.vendor":"Жеткізушіде","st.restored":"Қалпына келтірілді, растаңыз","st.closed":"Жабылды",
+recurring:"Қайталанған мәселе",sample:"Үлгі",reported:"Хабарланды",waiting:"Күтуде",
+"mine.empty":"Әзірге өтініш жоқ. Бірдеңе істемей қалса, «Мәселе туралы хабарлау» бөлімін ашыңыз.",
+"confirm.q":"Қазір жұмыс істеп тұр ма?","confirm.yes":"Иә, жұмыс істейді","confirm.no":"Жоқ, әлі істемейді",
+"q.stressAfter":"Qorǵan іске кіріскеннен кейін қаншалықты стресс болды?","q.speed":"Бұрын мұндай мәселелердің шешілуімен салыстырғанда бұл:",
+"speed.faster":"Жылдамырақ","speed.same":"Шамамен бірдей","speed.slower":"Баяуырақ","confirm.save":"Растап, жабу","reopened":"Қайта ашылды. Маманға әлі жұмыс істемейтіні хабарланды.",
+"queue.empty":"Кезек бос. Жаңа өтініштер мұнда бірден шығады.","queue.lead":"Барлық клиника. Ең ескі шешілмеген мәселе бірінші.",
+"act.ack":"Кері қоңырау шалдым","act.vendor":"Жеткізушіге берілді","act.restored":"Қызмет қалпына келтірілді",
+"note.ph":"Клиникаға жазба, әкімшіге көрінеді","note.add":"Жазба қосу","notes":"Жазбалар",
+"demo.load":"Белгіленген үлгі деректерді қосу","demo.clear":"Үлгі деректерді өшіру","demo.done":"Үлгі өтініштер қосылды. Олар «Үлгі» деп белгіленген және дәлел емес.",
+"sum.lead":"Соңғы 30 күн. Осы жүйедегі нақты өтініштер бойынша есептелді.","includeSample":"Үлгі деректерді қосу","sampleWarn":"Бұл есепте белгіленген үлгі деректер бар. Оларды дәлел ретінде қолданбаңыз.",
+"k.reported":"Хабарланған мәселелер","k.open":"Қазір ашық","k.tta":"Кері қоңырауға дейінгі медиана уақыт","k.tta15":"15 минут ішінде қоңырау шалынды","k.mttr":"Қалпына келтірудің медиана уақыты","k.recurring":"Қайталанған мәселелер",
+"k.downtime":"Пациенттерге әсер еткен тоқтау","k.avail":"Жұмыс уақытындағы қолжетімділік","k.stress":"Әкімші стрессі, дейін және кейін","k.faster":"Бұрынғыдан жылдам деп бағаланды",
+target:"Мақсат",min:"мин",none:"дерек жоқ",
+"byVendor":"Жауапты компаниялар бойынша мәселелер","baseline":"Qorǵan-ға дейінгі әдеттегі қалпына келтіру уақыты, минут (сіздің бағаңыз)","baselineNote":"Мақсат: бұдан кемінде 20% жылдам қалпына келтіру.",
+"check.title":"Дайындық тізімі","check.done":"орындалды",
+"chk.1":"Роутер мен МАЖ әкімші құпиясөздері клиникада сақталған","chk.2":"Әр жүйенің жеткізушісі мен келісімшарт мерзімі белгілі","chk.3":"Сақтық көшірмелер жасалады, осы тоқсанда қалпына келтіру тексерілді","chk.4":"Пациенттердің келісім парақтары қауіпсіз сақталады","chk.5":"Резервтік интернет байланысы бар","chk.6":"МАЖ істемегенде қызметкерлер не істеу керегін біледі","chk.7":"Бұрынғы қызметкерлердің аккаунттары өшірілген","chk.8":"Барлық компьютерде антивирус пен жаңартулар қосулы","chk.9":"Жеткізушілердің байланыстары бір жерде жазылған","chk.10":"Соңғы тексерістің ескертулері жабылған",
+"dec.title":"Пилот бойынша шешім","dec.continue":"Айына 80 000 ₸ бағасымен жалғастыру","dec.more":"Шешуге көбірек уақыт керек","dec.stop":"Пилоттан кейін тоқтату","dec.reason":"Негізгі себеп","dec.save":"Шешімді сақтау","dec.saved":"Шешім сақталды",
+print:"Басып шығару немесе PDF сақтау",exportTickets:"Өтініштерді экспорттау (CSV)",
+"map.lead":"Әр жүйе, оған жауапты компания және қолдау қызметінің байланысы. Тек жұмыс байланыстары.","v.system":"Жүйе","v.vendor":"Компания","v.contract":"Келісімшарт аяқталуы","v.contact":"Қолдау байланысы (тек жұмыс)","v.add":"Картаға қосу","v.empty":"Әзірге жүйелер енгізілмеген.","v.remove":"Өшіру",
+"t.lead":"Бір уақытта бір қатысушымен өткізіңіз. Алдымен келісім мәтінін дауыстап оқыңыз.","t.code":"Қатысушы коды","t.role":"Қатысушының рөлі","t.r.admin":"Әкімші","t.r.director":"Директор","t.r.staff":"Клиниканың басқа қызметкері",
+"t.consent":"Қатысушы қатысуға келісті және аты-жөні мен клиникасы жарияланбайтынын біледі.","t.tasks":"Тапсырмалар",
+"t1":"Хабарлаңыз: бүкіл клиникада интернет жоқ, пациенттер күтіп тұр.","t2":"Өтінішіңіздің күйін тауып, маманның жазбасын оқыңыз.","t3":"Мәселенің шешілгенін растап, стресс деңгейін бағалаңыз.","t4":"Тілді ауыстырып, 15 минуттық кері қоңырау уәдесін табыңыз.","t5":"Директор ретінде: қалпына келтірудің медиана уақытын және қайталанған мәселелерді табыңыз.",
+"t.start":"Бастау","t.done":"Орындалды","t.help":"Көмекпен орындалды","t.fail":"Орындалмады","t.errors":"Қателер","t.ease":"Жеңілдігі, 1 қиын – 5 оңай","t.use":"Жұмыста қолданар ма еді?","t.comment":"Не түсініксіз болды? Қатысушының сөзін жазыңыз","t.save":"Тест жазбасын сақтау","t.export":"Тест жазбаларын экспорттау (CSV)","t.list":"Сақталған тест жазбалары","t.saved":"Тест жазбасы сақталды",
+"err.consent":"Тест алдында келісім қажет.","err.pcode":"P01 түріндегі кодты пайдаланыңыз.","err.tasks":"Кемінде бір тапсырманың нәтижесін жазыңыз.","t.empty":"Әзірге тест жазбалары жоқ.",
+"mode.shared":"Ортақ режим: осы сілтемені ашқандардың бәрі бірдей өтініштерді көреді.","mode.local":"Жеке демо режимі: деректер тек осы браузерде сақталады. Жаңартуларды көру үшін екінші қойындыны маман ретінде ашыңыз.",
+"mode.connecting":"Ортақ дерекқорға қосылуда…","mode.cloudFail":"Ортақ дерекқорға қосылу мүмкін болмады, сондықтан деректер әзірге тек осы браузерде сақталады. Интернетті тексеріп, бетті қайта жүктеңіз.","mode.switched":"Бұл қолданушыға ортақ сақтауға рұқсат жоқ, сондықтан жүйе осы браузердегі жеке демо режиміне ауысты.",
+"help.title":"Qorǵan қалай жұмыс істейді",
+"help.1":"Әкімші мәселе туралы бір минуттан аз уақытта хабарлайды. Пішін тек маманға керек сұрақтарды қояды.",
+"help.2":"Qorǵan маманы жұмыс уақытында 15 минут ішінде кері қоңырау шалады, жауапты жеткізушіні табады және мәселе шешілгенше бақылайды.",
+"help.3":"Әкімші шешімді растап, стресс деңгейін бағалайды. Директор ай сайын өлшенген жауап беру және қалпына келтіру уақытын көреді.",
+"help.bound":"Қызмет шектері","help.b1":"Qorǵan үйлестіреді. Жеткізушілер өз жүйелерін келісімшарт бойынша жөндейді.","help.b2":"Кері қоңырау мақсаты: жұмыс күндері 08:00–20:00 аралығында 90% жағдайда 15 минут ішінде.","help.b3":"Qorǵan ешқашан пациент деректерін сұрамайды және сақтамайды.","help.b4":"Жауапкершілік айлық төлеммен шектеледі. Толығырақ қызмет көрсету шартында.",
+"help.changes":"5-тапсырма прототипінен бері не өзгерді",
+"ch.1":"Нақты жұмыс процесі: күйді енді маман өзгертеді. A5 прототипі тек имитацияланған кестені көрсететін.",
+"ch.2":"Өлшенетін көрсеткіштер: кері қоңырау, қалпына келтіру уақыты, қайталанған мәселелер және тоқтау уақыты өтініш уақыттарынан есептеледі.",
+"ch.3":"Әр мәселеге дейін және кейін стресс бағаланады, бұл клиент жолының эмоциялық жағын өлшейді.",
+"ch.4":"Әр экранда қазақ және ағылшын тілдері, жарық бөлмеге арналған үлкен мәтін режимі.",
+"ch.5":"Құпиялылық қорғанысы: пішін ЖСН-ге ұқсайтын 12 таңбалы сандарды қабылдамайды."
+}};
+const CATS=["internet","mis","device","phone","account","other"];
+const SCOPES=["one","dept","all"];
+const VENDORS=["Internet provider","MIS vendor","Equipment supplier","Telephony provider","Email or domain provider"];
+const VENDORS_KK={"Internet provider":"Интернет провайдері","MIS vendor":"МАЖ жеткізушісі","Equipment supplier":"Жабдық жеткізушісі","Telephony provider":"Телефония провайдері","Email or domain provider":"Пошта немесе домен провайдері"};
+const STATUS=["new","ack","vendor","restored","closed"];
+const TASKS=["t1","t2","t3","t4","t5"];
+const PIN="2416";
+let lang="en";
+const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+lang=ls.get("q_lang")==="kk"?"kk":"en";
+function t(k){return (I18N[lang]&&I18N[lang][k])||I18N.en[k]||k}
+function vname(v){if(!v)return t("vendor.unknown");return lang==="kk"&&VENDORS_KK[v]?VENDORS_KK[v]:v}
+
+/* ---------- tiny DOM helper (user text always via textContent) ---------- */
+function h(tag,attrs,...kids){const el=document.createElement(tag);
+  if(attrs)for(const[k,v]of Object.entries(attrs)){if(v==null||v===false)continue;
+    if(k==="class")el.className=v;else if(k==="text")el.textContent=v;else if(k.startsWith("on"))el.addEventListener(k.slice(2),v);else el.setAttribute(k,v===true?"":v)}
+  for(const c of kids.flat()){if(c==null||c===false)continue;el.append(c instanceof Node?c:document.createTextNode(String(c)))}
+  return el}
+function announce(msg){const l=document.getElementById("live");l.textContent="";setTimeout(()=>l.textContent=msg,30)}
+
+/* ---------- cloud database (Supabase). Leave empty to keep data in this browser only ---------- */
+const CLOUD={url:"https://jxqspukegxvhmsmvhvwg.supabase.co",key:"sb_publishable_SFh9zAi_xRLSbB5oLAMNsQ_B7PSnyeM"};
+/* ---------- storage: Supabase, else Claude shared db, else this browser ---------- */
+const COLS=["tickets","vendors","meta","tests"];
+const Store={mode:"local",data:{tickets:{},vendors:{},meta:{},tests:{}},db:null,switched:false,bc:null,
+  loadLocal(){try{const raw=ls.get("qorgan_mvp_v2");if(raw){const d=JSON.parse(raw);for(const c of COLS)this.data[c]=d[c]||{}}}catch(e){}},
+  saveLocal(){ls.set("qorgan_mvp_v2",JSON.stringify(this.data));try{this.bc&&this.bc.postMessage("changed")}catch(e){}},
+  async init(){
+    this.loadLocal();
+    try{this.bc=new BroadcastChannel("qorgan_mvp");this.bc.onmessage=()=>{if(this.mode==="local"){this.loadLocal();render()}}}catch(e){}
+    window.addEventListener("storage",e=>{if(e.key==="qorgan_mvp_v2"&&this.mode==="local"){this.loadLocal();render()}});
+    if(CLOUD.url&&CLOUD.key&&await this.initCloud())return;
+    if(!(window.claude&&typeof window.claude.use==="function"))return;
+    let db=null,user=null;
+    try{[db,user]=await Promise.all([window.claude.use("db"),window.claude.use("user")])}catch(e){db=null}
+    if(!db)return;
+    let canWrite=null;try{canWrite=user?await user.can("data.write"):null}catch(e){}
+    if(canWrite===false)return;
+    this.db=db;this.mode="shared";const fresh={};
+    for(const c of COLS){this.data[c]={};
+      db.collection(c).onSnapshot(s=>{const o={};s.docs.forEach(d=>{o[d.id]=d.data()});this.data[c]=o;render()},()=>{this.fallback()})}
+    render();
+  },
+  async initCloud(){
+    try{
+      if(!window.supabase){await new Promise((ok,bad)=>{const sc=document.createElement("script");sc.src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js";sc.onload=ok;sc.onerror=bad;document.head.append(sc)})}
+      const sb=window.supabase.createClient(CLOUD.url,CLOUD.key,{auth:{persistSession:false}});
+      this.connecting=true;render();
+      const {data,error}=await Promise.race([sb.from("docs").select("col,id,data"),new Promise((_,bad)=>setTimeout(()=>bad(new Error("timeout")),8000))]);this.connecting=false;if(error)throw error;
+      const fresh={tickets:{},vendors:{},meta:{},tests:{}};
+      (data||[]).forEach(r=>{if(fresh[r.col])fresh[r.col][r.id]=r.data});
+      this.data=fresh;this.sb=sb;this.mode="shared";this.cloud=true;
+      const apply=pl=>{const n=pl.new&&pl.new.col?pl.new:null,o=pl.old&&pl.old.col?pl.old:null;
+        if(pl.eventType==="DELETE"&&o&&this.data[o.col]){delete this.data[o.col][o.id]}
+        else if(n&&this.data[n.col]){this.data[n.col][n.id]=n.data}render()};
+      sb.channel("qorgan_docs").on("postgres_changes",{event:"*",schema:"public",table:"docs"},apply).subscribe(st=>{this.live=st==="SUBSCRIBED"});
+      setInterval(()=>{if(!this.live)this.refreshCloud()},8000);
+      render();return true;
+    }catch(e){this.connecting=false;this.cloudFailed=true;return false}
+  },
+  async refreshCloud(){try{const {data,error}=await this.sb.from("docs").select("col,id,data");if(error)return;const f={tickets:{},vendors:{},meta:{},tests:{}};(data||[]).forEach(r=>{if(f[r.col])f[r.col][r.id]=r.data});this.data=f;render()}catch(e){}},
+  fallback(){if(this.mode!=="local"){this.mode="local";this.switched=true;this.db=null;this.loadLocal();render()}},
+  async put(col,id,obj){
+    if(this.cloud){const {error}=await this.sb.from("docs").upsert({col,id,data:obj,updated_at:new Date().toISOString()});if(error)throw error;this.data[col][id]=obj;render();return}
+    if(this.mode==="shared"){try{await this.db.collection(col).doc(id).set(obj);return}catch(e){
+      if(e&&["not_granted","capability_disabled","capability_removed","revoked"].includes(e.code)){const snap=JSON.parse(JSON.stringify(this.data));this.fallback();for(const c of COLS)this.data[c]=Object.assign({},snap[c],this.data[c]);}else throw e}}
+    this.data[col][id]=obj;this.saveLocal();render()},
+  async del(col,id){
+    if(this.cloud){const {error}=await this.sb.from("docs").delete().eq("col",col).eq("id",id);if(error)throw error;delete this.data[col][id];render();return}
+    if(this.mode==="shared"){try{await this.db.collection(col).doc(id).delete();return}catch(e){this.fallback()}}
+    delete this.data[col][id];this.saveLocal();render()},
+  list(col){return Object.entries(this.data[col]).map(([id,v])=>Object.assign({id},v))}
+};
+
+/* ---------- app state ---------- */
+const S={role:null,clinic:null,tab:null,includeSample:true,draft:{},testDraft:null,flash:null,openNote:{}};
+try{const saved=JSON.parse(ls.get("q_session")||"null");if(saved&&saved.role){S.role=saved.role;S.clinic=saved.clinic;S.tab=saved.tab}}catch(e){}
+function persistSession(){ls.set("q_session",JSON.stringify({role:S.role,clinic:S.clinic,tab:S.tab}))}
+const TABS={admin:["report","mine","map","help"],analyst:["queue","map","help"],director:["summary","map","help"],tester:["test","help"]};
+const now=()=>Date.now();
+const DAY=864e5;
+function newId(p){return p+"-"+now().toString(36).toUpperCase().slice(-5)+Math.random().toString(36).slice(2,4).toUpperCase()}
+const MONTHS={en:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],kk:["қаң","ақп","нау","сәу","мам","мау","шіл","там","қыр","қаз","қар","жел"]};
+function fmtTime(ms){if(!ms)return"";const d=new Date(ms),p=n=>String(n).padStart(2,"0");return d.getDate()+" "+MONTHS[lang][d.getMonth()]+", "+p(d.getHours())+":"+p(d.getMinutes())}
+function mins(a,b){return (b-a)/6e4}
+function fmtMin(m){if(m==null||isNaN(m))return t("none");return (m<10?m.toFixed(1):Math.round(m))+" "+t("min")}
+function median(a){if(!a.length)return null;const s=[...a].sort((x,y)=>x-y),m=Math.floor(s.length/2);return s.length%2?s[m]:(s[m-1]+s[m])/2}
+
+/* ---------- chrome ---------- */
+function applyChrome(){
+  document.documentElement.lang=lang==="kk"?"kk":"en";
+  document.querySelectorAll("[data-i18n]").forEach(el=>el.textContent=t(el.dataset.i18n));
+  const lb=document.getElementById("langBtn");lb.textContent=t("langSwitch");lb.setAttribute("aria-label",lang==="kk"?"Switch to English":"Қазақ тіліне ауысу");
+  document.getElementById("roleBtn").hidden=!S.role;
+  const tabs=document.getElementById("tabs"),list=document.getElementById("tabList");list.textContent="";
+  tabs.hidden=!S.role;
+  if(S.role){for(const k of TABS[S.role]){list.append(h("button",{type:"button","aria-current":S.tab===k?"page":null,onclick:()=>{S.tab=k;persistSession();render();document.getElementById("view").focus?.()}},t("nav."+k)))}}
+  const mn=document.getElementById("modeNote");mn.textContent="";
+  if(S.role){
+    if(Store.switched)mn.append(h("p",{class:"notice n-warn"},t("mode.switched")));
+    else if(Store.connecting)mn.append(h("p",{class:"notice n-info"},t("mode.connecting")));
+    else if(Store.cloudFailed)mn.append(h("p",{class:"notice n-warn"},t("mode.cloudFail")));
+    else mn.append(h("p",{class:"notice n-info"},t(Store.mode==="shared"?"mode.shared":"mode.local")));
+    if(!navigator.onLine&&Store.mode==="shared")mn.append(h("p",{class:"notice n-bad"},t("err.offline")));
+  }
+}
+document.getElementById("langBtn").onclick=()=>{lang=lang==="en"?"kk":"en";ls.set("q_lang",lang);render();announce(lang==="kk"?"Қазақ тілі":"English")};
+const bigBtn=document.getElementById("bigBtn");
+function setBig(on){document.documentElement.classList.toggle("big",on);bigBtn.setAttribute("aria-pressed",String(on));ls.set("q_big",on?"1":"0")}
+setBig(ls.get("q_big")==="1");bigBtn.onclick=()=>setBig(bigBtn.getAttribute("aria-pressed")!=="true");
+document.getElementById("roleBtn").onclick=()=>{S.role=null;S.clinic=null;S.tab=null;persistSession();render()};
+window.addEventListener("online",render);window.addEventListener("offline",render);
+
+/* ---------- views ---------- */
+function render(){
+  applyChrome();
+  const v=document.getElementById("view");
+  const y=window.scrollY;const ae=document.activeElement;const active=ae&&ae.id;let sel=null;try{sel=ae&&typeof ae.selectionStart==="number"?ae.selectionStart:null}catch(e){}
+  v.textContent="";
+  if(!S.role)v.append(viewStart());
+  else{const fn={report:viewReport,mine:viewMine,map:viewMap,help:viewHelp,queue:viewQueue,summary:viewSummary,test:viewTest}[S.tab]||viewHelp;v.append(fn())}
+  if(active){const el=document.getElementById(active);if(el){el.focus({preventScroll:true});try{if(sel!=null&&el.setSelectionRange)el.setSelectionRange(sel,sel)}catch(e){}}}
+  window.scrollTo(0,y);
+}
+
+function viewStart(){
+  const box=h("div");let pending=null;
+  box.append(h("h1",null,t("start.title")),h("p",null,t("start.lead")));
+  const roles=[["admin","role.admin"],["analyst","role.analyst"],["director","role.director"],["tester","role.test"]];
+  const g=h("div",{class:"grid g2"});
+  const form=h("div",{class:"card",hidden:true,id:"loginCard"});
+  roles.forEach(([r,k])=>g.append(h("button",{type:"button",class:"role",onclick:()=>{pending=r;showLogin(r)}},h("strong",null,t(k)),h("span",null,t(k+".d")))));
+  function showLogin(r){
+    form.hidden=false;form.textContent="";
+    form.append(h("h2",{style:"margin-top:0"},t(r==="tester"?"role.test":"role."+r)));
+    const err=h("p",{class:"err",role:"alert"});
+    let inp;
+    if(r==="analyst"){form.append(h("label",{for:"pinIn"},t("pin")));inp=h("input",{id:"pinIn",type:"password",inputmode:"numeric",maxlength:"8",autocomplete:"off"})}
+    else if(r!=="tester"){form.append(h("label",{for:"codeIn"},t("clinicCode")));inp=h("input",{id:"codeIn",type:"text",maxlength:"10",autocomplete:"off",placeholder:"QOR-01",value:"QOR-01"})}
+    if(inp)form.append(inp);
+    form.append(err,h("div",{class:"row",style:"margin-top:12px"},h("button",{type:"button",class:"btn",onclick:go},t("enter"))),h("p",{class:"hint",style:"margin-top:12px"},t("demoNote")));
+    if(inp){inp.addEventListener("keydown",e=>{if(e.key==="Enter")go()});setTimeout(()=>inp.focus(),0)}
+    function go(){
+      if(r==="analyst"){if(inp.value.trim()!==PIN){err.textContent=t("err.pin");inp.setAttribute("aria-invalid","true");return}}
+      else if(r!=="tester"){const c=inp.value.trim().toUpperCase();if(!/^[A-Z]{3,5}-\d{2}$/.test(c)){err.textContent=t("err.code");inp.setAttribute("aria-invalid","true");return}S.clinic=c}
+      S.role=r;S.tab=TABS[r][0];persistSession();render();window.scrollTo(0,0)}
+  }
+  box.append(g,h("div",{style:"height:16px"}),form);
+  return box;
+}
+
+function radioGroup(name,opts,cur,onch){
+  const wrap=h("div",{class:"choices"});
+  opts.forEach(([val,label])=>{const id=name+"_"+val;
+    wrap.append(h("label",{class:"choice",for:id,style:"margin:0;font-weight:600"},h("input",{type:"radio",name,id,value:val,checked:String(cur)===String(val),onchange:()=>onch(val)}),h("span",null,label)))});
+  return wrap}
+
+function viewReport(){
+  const d=S.draft;const box=h("div");
+  box.append(h("h1",null,t("nav.report")));
+  if(S.flash){box.append(h("p",{class:"notice n-ok",role:"status"},S.flash));}
+  box.append(h("p",{class:"notice n-warn"},t("privacy")));
+  const card=h("div",{class:"card"});const errs={};
+  function q(key,legend,control){const e=h("p",{class:"err",id:"e_"+key});errs[key]=e;return h("fieldset",null,h("legend",null,legend),control,e)}
+  card.append(q("cat",t("q.what"),radioGroup("cat",CATS.map(c=>[c,t("cat."+c)]),d.cat,v=>{d.cat=v})));
+  card.append(q("scope",t("q.scope"),radioGroup("scope",SCOPES.map(c=>[c,t("scope."+c)]),d.scope,v=>{d.scope=v})));
+  card.append(q("patients",t("q.patients"),radioGroup("patients",[["yes",t("yes")],["no",t("no")]],d.patients,v=>{d.patients=v})));
+  const vs=h("select",{id:"vendorSel",onchange:e=>{d.vendor=e.target.value}},h("option",{value:""},t("vendor.unknown")),...VENDORS.map(v=>h("option",{value:v,selected:d.vendor===v},vname(v))));
+  card.append(h("label",{for:"vendorSel"},t("q.vendor")),vs);
+  const left=h("span",{class:"hint"});
+  const ta=h("textarea",{id:"descIn",maxlength:"300","aria-describedby":"descHelp e_desc",oninput:e=>{d.desc=e.target.value;left.textContent=" "+(300-d.desc.length)+" "+t("chars")}});ta.value=d.desc||"";
+  left.textContent=" "+(300-(d.desc||"").length)+" "+t("chars");
+  errs.desc=h("p",{class:"err",id:"e_desc"});
+  card.append(h("label",{for:"descIn"},t("q.desc")),ta,h("p",{class:"hint",id:"descHelp"},t("privacy"),left),errs.desc);
+  const ci=h("input",{id:"contactIn",type:"text",maxlength:"80",placeholder:t("contact.ph"),oninput:e=>{d.contact=e.target.value}});ci.value=d.contact||"";
+  errs.contact=h("p",{class:"err"});
+  card.append(h("label",{for:"contactIn"},t("q.contact")),ci,errs.contact);
+  card.append(q("stress",t("q.stress"),h("div",null,radioGroup("stress",[1,2,3,4,5].map(n=>[n,String(n)]),d.stress,v=>{d.stress=Number(v)}),h("p",{class:"hint"},t("stress.low")+" · "+t("stress.high")))));
+  const saveErr=h("p",{class:"err",role:"alert"});
+  const btn=h("button",{type:"button",class:"btn",id:"submitBtn",onclick:submit},t("submit"));
+  card.append(h("div",{class:"row",style:"margin-top:16px"},btn),saveErr);
+  box.append(card);
+  async function submit(){
+    S.flash=null;let first=null;Object.values(errs).forEach(e=>e.textContent="");
+    const need=(k,ok,msg)=>{if(!ok){errs[k].textContent=msg;first=first||k}};
+    need("cat",!!d.cat,t("err.required"));need("scope",!!d.scope,t("err.required"));need("patients",!!d.patients,t("err.required"));
+    const desc=(d.desc||"").trim(),contact=(d.contact||"").trim();
+    need("desc",desc.length>=10,t("err.desc"));
+    if(/\d{12}/.test(desc.replace(/[\s.-]/g,""))){errs.desc.textContent=t("err.iin");first=first||"desc"}
+    if(/(^|\D)\d{12}(\D|$)/.test(contact.replace(/[\s.()-]/g,""))){errs.contact.textContent=t("err.iin");first=first||"contact"}
+    need("contact",contact.length>=3,t("err.required"));need("stress",!!d.stress,t("err.required"));
+    if(first){const el=document.getElementById(first==="desc"?"descIn":first==="contact"?"contactIn":first+"_"+(first==="stress"?1:first==="patients"?"yes":first==="cat"?"internet":"one"));el&&el.focus();announce(t("err.required"));return}
+    if(!navigator.onLine&&Store.mode==="shared"){saveErr.textContent=t("err.offline");return}
+    btn.disabled=true;
+    const created=now();
+    const recurring=Store.list("tickets").some(x=>x.clinic===S.clinic&&x.cat===d.cat&&x.createdAt<created&&created-x.createdAt<30*DAY);
+    const tk={clinic:S.clinic,cat:d.cat,scope:d.scope,patients:d.patients==="yes",vendor:d.vendor||"",desc,contact,stressBefore:d.stress,createdAt:created,status:"new",notes:[],recurring,sample:false};
+    try{await Store.put("tickets",newId("Q"),tk);S.draft={};S.flash=t("sent");S.tab="mine";persistSession();render();announce(t("sent"))}
+    catch(e){btn.disabled=false;saveErr.textContent=t("err.save")}
+  }
+  return box;
+}
+
+function statusPill(s){return h("span",{class:"pill s-"+s},t("st."+s))}
+function timeline(tk){
+  const steps=[["new",tk.createdAt],["ack",tk.ackAt],["vendor",tk.vendorAt],["restored",tk.restoredAt],["closed",tk.closedAt]];
+  return h("ol",{class:"tl"},steps.filter(([s,at])=>at||s==="new").map(([s,at])=>h("li",{class:at?"done":""},h("strong",null,t("st."+s))," · ",fmtTime(at))))}
+function notesList(tk){if(!tk.notes||!tk.notes.length)return null;
+  return h("div",null,h("h3",null,t("notes")),h("ul",null,tk.notes.map(n=>h("li",null,h("span",{class:"meta"},fmtTime(n.at)+" · "+(n.by==="analyst"?"Qorǵan":t("role.admin"))+": "),n.text))))}
+function ticketHead(tk){return [h("div",{class:"row"},statusPill(tk.status),tk.recurring?h("span",{class:"pill p-rec"},t("recurring")):null,tk.sample?h("span",{class:"pill p-sample"},t("sample")):null,h("span",{class:"meta"},tk.id+" · "+(tk.clinic||""))),
+  h("h3",{style:"margin-top:8px"},t("cat."+tk.cat)+" · "+t("scope."+tk.scope)+(tk.patients?" · "+t("q.patients").replace("?","")+": "+t("yes"):"")),
+  h("p",null,tk.desc),h("p",{class:"meta"},vname(tk.vendor)+" · "+tk.contact)]}
+
+function viewMine(){
+  const box=h("div");box.append(h("h1",null,t("nav.mine")));
+  if(S.flash){box.append(h("p",{class:"notice n-ok",role:"status"},S.flash));S.flash=null}
+  const list=Store.list("tickets").filter(x=>x.clinic===S.clinic).sort((a,b)=>b.createdAt-a.createdAt);
+  if(!list.length){box.append(h("p",{class:"card"},t("mine.empty")));return box}
+  list.forEach(tk=>{const c=h("article",{class:"card ticket","aria-label":tk.id});c.append(...ticketHead(tk),timeline(tk));const nl=notesList(tk);if(nl)c.append(nl);
+    if(tk.status==="restored")c.append(confirmBlock(tk));
+    if(tk.status==="closed"&&tk.stressAfter)c.append(h("p",{class:"meta"},t("k.stress")+": "+tk.stressBefore+" → "+tk.stressAfter+" · "+t("speed."+tk.speed)));
+    box.append(c)});
+  return box}
+
+function confirmBlock(tk){
+  const st=S.openNote[tk.id]||(S.openNote[tk.id]={});const w=h("div",{class:"notice n-ok",style:"font-weight:400"});const err=h("p",{class:"err",role:"alert"});
+  w.append(h("h3",{style:"margin-top:0"},t("confirm.q")),
+    h("fieldset",null,h("legend",null,t("q.stressAfter")),radioGroup("sa_"+tk.id,[1,2,3,4,5].map(n=>[n,String(n)]),st.sa,v=>{st.sa=Number(v)}),h("p",{class:"hint"},t("stress.low")+" · "+t("stress.high"))),
+    h("fieldset",null,h("legend",null,t("q.speed")),radioGroup("sp_"+tk.id,["faster","same","slower"].map(s=>[s,t("speed."+s)]),st.sp,v=>{st.sp=v})),err,
+    h("div",{class:"row",style:"margin-top:12px"},
+      h("button",{type:"button",class:"btn ok",onclick:async()=>{if(!st.sa||!st.sp){err.textContent=t("err.required");return}
+        try{await Store.put("tickets",tk.id,Object.assign({},strip(tk),{status:"closed",closedAt:now(),stressAfter:st.sa,speed:st.sp}));announce(t("st.closed"))}catch(e){err.textContent=t("err.save")}}},t("confirm.yes")),
+      h("button",{type:"button",class:"btn bad",onclick:async()=>{const n=(tk.notes||[]).concat([{at:now(),by:"admin",text:t("confirm.no")}]);
+        try{await Store.put("tickets",tk.id,Object.assign({},strip(tk),{status:"vendor",restoredAt:null,notes:n,reopened:(tk.reopened||0)+1}));announce(t("reopened"))}catch(e){err.textContent=t("err.save")}}},t("confirm.no"))));
+  return w}
+function strip(tk){const o=Object.assign({},tk);delete o.id;return o}
+
+function viewQueue(){
+  const box=h("div");box.append(h("h1",null,t("nav.queue")),h("p",null,t("queue.lead")));
+  const all=Store.list("tickets");
+  const open=all.filter(x=>x.status!=="closed").sort((a,b)=>(b.patients-a.patients)||(a.createdAt-b.createdAt));
+  const tools=h("div",{class:"row noprint",style:"margin-bottom:14px"},
+    h("button",{type:"button",class:"btn secondary",onclick:loadSample},t("demo.load")),
+    all.some(x=>x.sample)?h("button",{type:"button",class:"btn secondary",onclick:clearSample},t("demo.clear")):null);
+  box.append(tools);
+  if(S.flash){box.append(h("p",{class:"notice n-sample",role:"status"},S.flash));S.flash=null}
+  if(!open.length)box.append(h("p",{class:"card"},t("queue.empty")));
+  open.forEach(tk=>{const c=h("article",{class:"card ticket"});c.append(...ticketHead(tk));
+    c.append(h("p",{class:"meta"},t("waiting")+": "+fmtMin(mins(tk.createdAt,now()))+" · "+t("q.stress")+" "+tk.stressBefore),timeline(tk));
+    const nl=notesList(tk);if(nl)c.append(nl);
+    const err=h("p",{class:"err",role:"alert"});
+    const upd=async(patch)=>{try{await Store.put("tickets",tk.id,Object.assign({},strip(tk),patch));announce(t("st."+(patch.status||tk.status)))}catch(e){err.textContent=t("err.save")}};
+    const acts=h("div",{class:"row"});
+    if(tk.status==="new")acts.append(h("button",{type:"button",class:"btn",onclick:()=>upd({status:"ack",ackAt:now()})},t("act.ack")));
+    if(tk.status==="ack")acts.append(h("button",{type:"button",class:"btn",onclick:()=>upd({status:"vendor",vendorAt:now()})},t("act.vendor")));
+    if(tk.status==="ack"||tk.status==="vendor")acts.append(h("button",{type:"button",class:"btn ok",onclick:()=>upd({status:"restored",restoredAt:now(),ackAt:tk.ackAt||now()})},t("act.restored")));
+    const nid="note_"+tk.id;const ni=h("input",{type:"text",id:nid,maxlength:"200",placeholder:t("note.ph"),"aria-label":t("note.ph")});ni.value=S.openNote[nid]||"";ni.oninput=e=>{S.openNote[nid]=e.target.value};
+    const addNote=async()=>{const txt=ni.value.trim();if(!txt)return;if(/\d{12}/.test(txt.replace(/[\s.-]/g,""))){err.textContent=t("err.iin");return}S.openNote[nid]="";await upd({notes:(tk.notes||[]).concat([{at:now(),by:"analyst",text:txt}])})};
+    ni.addEventListener("keydown",e=>{if(e.key==="Enter")addNote()});
+    c.append(acts,h("div",{class:"row",style:"margin-top:10px"},h("div",{style:"flex:1;min-width:200px"},ni),h("button",{type:"button",class:"btn secondary",onclick:addNote},t("note.add"))),err);
+    box.append(c)});
+  const done=all.filter(x=>x.status==="closed").sort((a,b)=>b.closedAt-a.closedAt).slice(0,10);
+  if(done.length){box.append(h("h2",null,t("st.closed")));const tb=h("table");tb.append(h("tr",null,["ID","",t("k.tta"),t("k.mttr"),t("k.stress")].map(x=>h("th",null,x))));
+    done.forEach(x=>tb.append(h("tr",null,h("td",null,x.id+(x.sample?" ("+t("sample")+")":"")),h("td",null,x.clinic+" · "+t("cat."+x.cat)),h("td",null,fmtMin(x.ackAt?mins(x.createdAt,x.ackAt):null)),h("td",null,fmtMin(x.restoredAt?mins(x.createdAt,x.restoredAt):null)),h("td",null,(x.stressBefore||"")+" → "+(x.stressAfter||"")))));
+    box.append(h("div",{class:"tablewrap card"},tb))}
+  return box}
+
+async function loadSample(){
+  const base=now()-21*DAY;const r=(a,b)=>a+Math.round(Math.random()*(b-a));
+  const plan=[["internet","all",true,"Internet provider","Router lost connection, no internet at reception.",0],["mis","dept",true,"MIS vendor","MIS will not open appointment schedule.",3],["device","one",false,"Equipment supplier","Label printer in the lab prints blank pages.",6],
+    ["internet","all",true,"Internet provider","Internet down again after rain.",11],["account","one",false,"","Doctor cannot log in to email.",14],["mis","dept",true,"MIS vendor","Lab results not appearing in MIS.",18]];
+  for(let i=0;i<plan.length;i++){const[cat,scope,pat,vendor,desc,day]=plan[i];const c=base+day*DAY+r(9,16)*36e5;const ack=c+r(4,20)*6e4;const res=ack+r(25,240)*6e4;
+    await Store.put("tickets",newId("S"),{clinic:"QOR-01",cat,scope,patients:pat,vendor,desc:desc+" [sample]",contact:"Reception desk",stressBefore:r(3,5),createdAt:c,ackAt:ack,vendorAt:vendor?ack+5*6e4:null,restoredAt:res,closedAt:res+10*6e4,status:"closed",notes:[],recurring:i===3||i===5,stressAfter:r(1,3),speed:["faster","same","faster"][i%3],sample:true})}
+  S.flash=t("demo.done");render()}
+async function clearSample(){for(const x of Store.list("tickets").filter(x=>x.sample))await Store.del("tickets",x.id);render()}
+
+function viewSummary(){
+  const box=h("div");box.append(h("h1",null,t("nav.summary")+" · "+S.clinic),h("p",null,t("sum.lead")));
+  const all=Store.list("tickets").filter(x=>x.clinic===S.clinic&&x.createdAt>now()-30*DAY);
+  const hasSample=all.some(x=>x.sample);
+  if(hasSample)box.append(h("label",{class:"check noprint",style:"font-weight:600"},h("input",{type:"checkbox",checked:S.includeSample,onchange:e=>{S.includeSample=e.target.checked;render()}}),t("includeSample")));
+  const T=all.filter(x=>S.includeSample||!x.sample);
+  if(T.some(x=>x.sample))box.append(h("p",{class:"notice n-sample"},t("sampleWarn")));
+  const meta=Store.data.meta["clinic_"+S.clinic]||{};
+  const tta=T.filter(x=>x.ackAt).map(x=>mins(x.createdAt,x.ackAt));
+  const ttr=T.filter(x=>x.restoredAt).map(x=>mins(x.createdAt,x.restoredAt));
+  const within=tta.length?tta.filter(m=>m<=15).length/tta.length:null;
+  const down=T.filter(x=>x.patients&&x.restoredAt).reduce((s,x)=>s+mins(x.createdAt,x.restoredAt),0)+T.filter(x=>x.patients&&!x.restoredAt).reduce((s,x)=>s+mins(x.createdAt,now()),0);
+  const clinicMin=30*12*60;const avail=T.length?1-down/clinicMin:null;
+  const pairs=T.filter(x=>x.stressAfter);const sb=median(pairs.map(x=>x.stressBefore)),sa=median(pairs.map(x=>x.stressAfter));
+  const faster=pairs.filter(x=>x.speed==="faster").length;
+  const mttr=median(ttr);const baseline=Number(meta.baseline)||null;
+  const kpi=(l,v,tg,state)=>h("div",{class:"kpi"+(state===true?" good":state===false?" miss":"")},h("div",{class:"l"},l),h("div",{class:"v"},v),tg?h("div",{class:"t"},tg):null);
+  const g=h("div",{class:"grid g3"});
+  g.append(kpi(t("k.reported"),String(T.length)),kpi(t("k.open"),String(T.filter(x=>x.status!=="closed").length)),
+    kpi(t("k.tta"),fmtMin(median(tta)),t("target")+": ≤ 15 "+t("min"),tta.length?median(tta)<=15:null),
+    kpi(t("k.tta15"),within==null?t("none"):Math.round(within*100)+"%",t("target")+": ≥ 90%",within==null?null:within>=0.9),
+    kpi(t("k.mttr"),fmtMin(mttr),baseline?t("target")+": ≤ "+Math.round(baseline*0.8)+" "+t("min"):t("baselineNote"),baseline&&mttr!=null?mttr<=baseline*0.8:null),
+    kpi(t("k.recurring"),String(T.filter(x=>x.recurring).length)),
+    kpi(t("k.downtime"),fmtMin(T.length?down:null)),
+    kpi(t("k.avail"),avail==null?t("none"):(Math.max(0,avail)*100).toFixed(2)+"%","08:00–20:00 × 30"),
+    kpi(t("k.stress"),sb==null?t("none"):sb+" → "+sa,t("target")+": −1",sb==null?null:(sb-sa)>=1),
+    kpi(t("k.faster"),pairs.length?faster+" / "+pairs.length:t("none")));
+  box.append(T.length?g:h("p",{class:"card"},t("none")));
+  const bl=h("input",{id:"baseIn",type:"number",min:"1",max:"10000",value:meta.baseline||"",style:"max-width:200px"});
+  bl.addEventListener("change",async e=>{const v=Math.max(0,Math.min(10000,Number(e.target.value)||0));await Store.put("meta","clinic_"+S.clinic,Object.assign({},meta,{baseline:v||null}))});
+  box.append(h("div",{class:"card noprint"},h("label",{for:"baseIn",style:"margin-top:0"},t("baseline")),bl,h("p",{class:"hint"},t("baselineNote"))));
+  const byV={};T.forEach(x=>{const k=vname(x.vendor);byV[k]=(byV[k]||0)+1});const mx=Math.max(1,...Object.values(byV));
+  const vc=h("div",{class:"card"},h("h2",{style:"margin-top:0"},t("byVendor")));
+  Object.entries(byV).sort((a,b)=>b[1]-a[1]).forEach(([k,n])=>vc.append(h("div",{class:"bar"},h("span",null,k),h("div",{class:"track",role:"img","aria-label":k+": "+n},h("div",{class:"fill",style:"width:"+(n/mx*100)+"%"})),h("strong",null,String(n)))));
+  if(!T.length)vc.append(h("p",null,t("none")));box.append(vc);
+  const chk=meta.checklist||{};const doneN=Object.values(chk).filter(Boolean).length;
+  const cc=h("div",{class:"card"},h("h2",{style:"margin-top:0"},t("check.title")+" · "+doneN+"/10 "+t("check.done")));
+  for(let i=1;i<=10;i++){const id="chk"+i;cc.append(h("label",{class:"check",for:id,style:"font-weight:400"},h("input",{type:"checkbox",id,checked:!!chk[i],onchange:async e=>{await Store.put("meta","clinic_"+S.clinic,Object.assign({},meta,{checklist:Object.assign({},chk,{[i]:e.target.checked})}))}}),t("chk."+i)))}
+  box.append(cc);
+  const dec=meta.decision||{};const dd={v:dec.v,reason:dec.reason||""};const derr=h("p",{class:"err",role:"alert"});
+  const rin=h("input",{id:"decReason",type:"text",maxlength:"200",value:dd.reason,oninput:e=>dd.reason=e.target.value});
+  box.append(h("div",{class:"card"},h("h2",{style:"margin-top:0"},t("dec.title")),
+    radioGroup("dec",["continue","more","stop"].map(k=>[k,t("dec."+k)]),dd.v,v=>dd.v=v),
+    h("label",{for:"decReason"},t("dec.reason")),rin,derr,
+    h("div",{class:"row noprint",style:"margin-top:12px"},h("button",{type:"button",class:"btn",onclick:async()=>{if(!dd.v){derr.textContent=t("err.required");return}
+      try{await Store.put("meta","clinic_"+S.clinic,Object.assign({},meta,{decision:{v:dd.v,reason:dd.reason.trim(),at:now()}}));announce(t("dec.saved"))}catch(e){derr.textContent=t("err.save")}}},t("dec.save"))),
+    dec.at?h("p",{class:"meta"},t("dec.saved")+": "+fmtTime(dec.at)+" · "+t("dec."+dec.v)):null));
+  box.append(h("div",{class:"row noprint"},h("button",{type:"button",class:"btn secondary",onclick:()=>window.print()},t("print")),
+    h("button",{type:"button",class:"btn secondary",onclick:()=>exportCsv("qorgan_tickets_"+S.clinic+".csv",ticketRows(T))},t("exportTickets"))));
+  return box}
+
+function ticketRows(T){const head=["id","clinic","sample","category","scope","patients_waiting","vendor","created","call_back_min","restore_min","status","recurring","reopened","stress_before","stress_after","speed_vs_before"];
+  return [head].concat(T.map(x=>[x.id,x.clinic,x.sample?1:0,x.cat,x.scope,x.patients?1:0,x.vendor,new Date(x.createdAt).toISOString(),x.ackAt?mins(x.createdAt,x.ackAt).toFixed(1):"",x.restoredAt?mins(x.createdAt,x.restoredAt).toFixed(1):"",x.status,x.recurring?1:0,x.reopened||0,x.stressBefore||"",x.stressAfter||"",x.speed||""]))}
+async function exportCsv(name,rows){
+  const csv="﻿"+rows.map(r=>r.map(v=>{const s=String(v??"");return /[",\n;]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s}).join(",")).join("\r\n");
+  try{if(window.claude&&window.claude.use){const dl=await window.claude.use("downloads");if(dl){await dl.save({filename:name,data:new Blob([csv],{type:"text/csv"})});return}}}catch(e){if(e&&e.code==="declined")return}
+  const a=h("a",{href:URL.createObjectURL(new Blob([csv],{type:"text/csv"})),download:name});document.body.append(a);a.click();a.remove()}
+
+function viewMap(){
+  const box=h("div");const clinic=S.clinic||"QOR-01";box.append(h("h1",null,t("nav.map")+" · "+clinic),h("p",null,t("map.lead")));
+  const rows=Store.list("vendors").filter(x=>x.clinic===clinic);
+  const card=h("div",{class:"card tablewrap"});
+  if(!rows.length)card.append(h("p",null,t("v.empty")));
+  else{const tb=h("table");tb.append(h("tr",null,[t("v.system"),t("v.vendor"),t("v.contract"),t("v.contact"),""].map(x=>h("th",null,x))));
+    rows.forEach(r=>tb.append(h("tr",null,h("td",null,r.system),h("td",null,r.vendor),h("td",null,r.contract||"—"),h("td",null,r.contact||"—"),h("td",null,S.role!=="director"?h("button",{type:"button",class:"btn bad",onclick:()=>Store.del("vendors",r.id)},t("v.remove")):null))));card.append(tb)}
+  box.append(card);
+  if(S.role!=="director"){const f={};const err=h("p",{class:"err",role:"alert"});
+    const inp=(k,lab,type)=>{const i=h("input",{id:"v_"+k,type:type||"text",maxlength:"80",oninput:e=>f[k]=e.target.value});return [h("label",{for:"v_"+k},lab),i]};
+    box.append(h("div",{class:"card"},h("div",{class:"grid g2"},h("div",null,...inp("system",t("v.system"))),h("div",null,...inp("vendor",t("v.vendor"))),h("div",null,...inp("contract",t("v.contract"),"date")),h("div",null,...inp("contact",t("v.contact")))),err,
+      h("div",{class:"row",style:"margin-top:12px"},h("button",{type:"button",class:"btn",onclick:async()=>{if(!(f.system||"").trim()||!(f.vendor||"").trim()){err.textContent=t("err.required");return}
+        try{await Store.put("vendors",newId("V"),{clinic,system:f.system.trim(),vendor:f.vendor.trim(),contract:f.contract||"",contact:(f.contact||"").trim()})}catch(e){err.textContent=t("err.save")}}},t("v.add")))))}
+  return box}
+
+function viewHelp(){
+  const ul=(...k)=>h("ul",null,k.map(x=>h("li",null,t(x))));
+  return h("div",null,h("h1",null,t("help.title")),h("div",{class:"card"},h("ol",null,["help.1","help.2","help.3"].map(k=>h("li",null,t(k))))),
+    h("div",{class:"card"},h("h2",{style:"margin-top:0"},t("help.bound")),ul("help.b1","help.b2","help.b3","help.b4")),
+    h("div",{class:"card"},h("h2",{style:"margin-top:0"},t("help.changes")),ul("ch.1","ch.2","ch.3","ch.4","ch.5")),
+    h("p",{class:"hint"},t("demoNote")))}
+
+function viewTest(){
+  if(!S.testDraft)S.testDraft={code:"",role:"",consent:false,tasks:{},use:"",comment:""};
+  const d=S.testDraft;const box=h("div");box.append(h("h1",null,t("role.test")),h("p",null,t("t.lead")));
+  if(S.flash){box.append(h("p",{class:"notice n-ok",role:"status"},S.flash));S.flash=null}
+  const err=h("p",{class:"err",role:"alert"});
+  const code=h("input",{id:"pcode",type:"text",maxlength:"4",placeholder:"P01",value:d.code,oninput:e=>d.code=e.target.value.toUpperCase().trim()});
+  const card=h("div",{class:"card"},h("label",{for:"pcode",style:"margin-top:0"},t("t.code")),code,
+    h("fieldset",null,h("legend",null,t("t.role")),radioGroup("prole",["admin","director","staff"].map(k=>[k,t("t.r."+k)]),d.role,v=>d.role=v)),
+    h("label",{class:"check",for:"pcons",style:"font-weight:600"},h("input",{type:"checkbox",id:"pcons",checked:d.consent,onchange:e=>d.consent=e.target.checked}),t("t.consent")));
+  box.append(card,h("h2",null,t("t.tasks")));
+  TASKS.forEach((k,i)=>{const r=d.tasks[k]||(d.tasks[k]={errors:0});const tc=h("div",{class:"task card"});
+    const time=r.start?(r.end?Math.round((r.end-r.start)/1000)+" s":"…"):"";
+    tc.append(h("h3",{style:"margin-top:0"},"T"+(i+1)+". "+t(k)),
+      h("div",{class:"row"},h("button",{type:"button",class:"btn secondary",onclick:()=>{r.start=now();r.end=null;r.result=null;render()}},t("t.start")),
+        ...["done","help","fail"].map(res=>h("button",{type:"button",class:"btn"+(r.result===res?"":" secondary"),"aria-pressed":String(r.result===res),disabled:!r.start,onclick:()=>{r.end=r.end||now();r.result=res;render()}},t("t."+res))),
+        h("strong",null,time)),
+      h("div",{class:"row"},h("span",{class:"counter"},t("t.errors")+": ",h("button",{type:"button",class:"btn secondary","aria-label":"−",onclick:()=>{r.errors=Math.max(0,r.errors-1);render()}},"−"),h("strong",null,String(r.errors)),h("button",{type:"button",class:"btn secondary","aria-label":"+",onclick:()=>{r.errors++;render()}},"+")),
+        h("span",null,t("t.ease")+": "),radioGroup("ease_"+k,[1,2,3,4,5].map(n=>[n,String(n)]),r.ease,v=>r.ease=Number(v))));
+    box.append(tc)});
+  const cm=h("textarea",{id:"pcomm",maxlength:"500",oninput:e=>d.comment=e.target.value});cm.value=d.comment;
+  box.append(h("div",{class:"card"},h("fieldset",{style:"margin-top:0"},h("legend",null,t("t.use")),radioGroup("puse",[["yes",t("yes")],["maybe",t("maybe")],["no",t("no")]],d.use,v=>d.use=v)),
+    h("label",{for:"pcomm"},t("t.comment")),cm,err,
+    h("div",{class:"row",style:"margin-top:12px"},h("button",{type:"button",class:"btn",onclick:save},t("t.save")))));
+  async function save(){err.textContent="";
+    if(!/^P\d{2}$/.test(d.code)){err.textContent=t("err.pcode");code.focus();return}
+    if(!d.consent){err.textContent=t("err.consent");return}
+    if(!d.role){err.textContent=t("err.required");return}
+    if(!TASKS.some(k=>d.tasks[k]&&d.tasks[k].result)){err.textContent=t("err.tasks");return}
+    const rec={code:d.code,role:d.role,at:now(),lang,use:d.use,comment:d.comment.trim().slice(0,500),tasks:{}};
+    TASKS.forEach(k=>{const r=d.tasks[k];if(r&&r.result)rec.tasks[k]={result:r.result,sec:r.end&&r.start?Math.round((r.end-r.start)/1000):null,errors:r.errors,ease:r.ease||null}});
+    try{await Store.put("tests",d.code+"-"+now().toString(36),rec);S.testDraft=null;S.flash=t("t.saved");render()}catch(e){err.textContent=t("err.save")}}
+  const recs=Store.list("tests").sort((a,b)=>a.at-b.at);
+  box.append(h("h2",null,t("t.list")));
+  if(!recs.length)box.append(h("p",{class:"card"},t("t.empty")));
+  else{const tb=h("table");tb.append(h("tr",null,[t("t.code"),t("t.role"),...TASKS.map((k,i)=>"T"+(i+1)),t("t.use")].map(x=>h("th",null,x))));
+    recs.forEach(r=>tb.append(h("tr",null,h("td",null,r.code),h("td",null,t("t.r."+r.role)),...TASKS.map(k=>h("td",null,r.tasks[k]?t("t."+r.tasks[k].result)+(r.tasks[k].sec!=null?" · "+r.tasks[k].sec+" s":""):"—")),h("td",null,r.use?t(r.use):"—"))));
+    box.append(h("div",{class:"card tablewrap"},tb))}
+  box.append(h("div",{class:"row"},h("button",{type:"button",class:"btn secondary",onclick:()=>{const head=["code","role","date","language"];TASKS.forEach(k=>head.push(k+"_result",k+"_seconds",k+"_errors",k+"_ease"));head.push("would_use","comment");
+    exportCsv("qorgan_user_tests.csv",[head].concat(recs.map(r=>{const row=[r.code,r.role,new Date(r.at).toISOString(),r.lang];TASKS.forEach(k=>{const x=r.tasks[k]||{};row.push(x.result||"",x.sec??"",x.errors??"",x.ease??"")});row.push(r.use||"",r.comment||"");return row})))}},t("t.export"))));
+  return box}
+
+render();
+Store.init().then(render).catch(()=>render());
+setInterval(()=>{if(S.tab==="queue")render()},30000);
+</script>
+</body>
+</html>
