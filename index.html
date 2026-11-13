@@ -39,6 +39,7 @@ header.top{background:var(--brand);color:var(--brand-ink)}
 header.top .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding-top:12px;padding-bottom:12px}
 .logo{font-weight:800;font-size:1.35rem;letter-spacing:.01em;margin-right:auto}
 .logo small{display:block;font-weight:600;font-size:.8rem;opacity:.95}
+.rolechip{font-weight:700;padding:4px 0;margin-right:4px;text-decoration:underline;text-underline-offset:4px}
 .tbtn{background:transparent;border:2px solid currentColor;color:inherit;border-radius:999px;padding:6px 14px;font-weight:700;cursor:pointer;min-height:44px}
 .tbtn[aria-pressed="true"]{background:var(--brand-ink);color:var(--brand)}
 nav.tabs{background:var(--surface);border-bottom:2px solid var(--line)}
@@ -133,7 +134,7 @@ th{font-size:.92rem}
     <div class="logo">Qorǵan Clinic Desk<small data-i18n="tagline"></small></div>
     <button class="tbtn" id="langBtn" type="button" aria-label="Language"></button>
     <button class="tbtn" id="bigBtn" type="button" aria-pressed="false" data-i18n="bigText"></button>
-    <button class="tbtn" id="roleBtn" type="button" hidden data-i18n="nav.switch"></button>
+    <span id="roleChip" class="rolechip" hidden></span><button class="tbtn" id="roleBtn" type="button" hidden data-i18n="nav.switch"></button>
   </div>
 </header>
 <nav class="tabs" id="tabs" hidden aria-label="Sections"><div class="wrap" id="tabList"></div></nav>
@@ -149,7 +150,7 @@ th{font-size:.92rem}
 const I18N={
 en:{
 tagline:"One accountable IT contact for your clinic",bigText:"Large text",langSwitch:"Қазақша","nav.switch":"Change role",
-footer:"Final exam MVP, version 2.0. Qorǵan coordinates IT problems and vendors. It does not store patient data.",
+footer:"Final exam MVP, version 2.1. Qorǵan coordinates IT problems and vendors. It does not store patient data.",
 "start.title":"Who is using the desk?","start.lead":"Choose your role. Each role sees only what it needs.",
 "role.admin":"Clinic administrator","role.admin.d":"Report a problem and follow it until it is fixed.",
 "role.analyst":"Qorǵan analyst","role.analyst.d":"Call back, coordinate the vendor, record the fix.",
@@ -192,7 +193,7 @@ print:"Print or save as PDF",exportTickets:"Export tickets (CSV)",
 "t.lead":"Use this with one participant at a time. Read the consent text aloud first.","t.code":"Participant code","t.role":"Participant role","t.r.admin":"Administrator","t.r.director":"Director","t.r.staff":"Other clinic staff",
 "t.consent":"The participant agreed to take part and knows that their name and clinic will not be published.","t.tasks":"Tasks",
 "t1":"Report: the internet is down in the whole clinic and patients are waiting.","t2":"Find the status of your problem and read the analyst's note.","t3":"Confirm that the problem is fixed and rate your stress.","t4":"Switch the app to the other language, then find how quickly Qorǵan promises to call you back.","t5":"As director: find the median time to restore and the repeat problems.",
-"t.start":"Start","t.done":"Done","t.help":"Done with help","t.fail":"Not done","t.errors":"Errors","t.ease":"Ease, 1 hard to 5 easy","t.use":"Would use it at work?","t.comment":"What was confusing? Write the participant's words","t6":"As director: find how many readiness checklist items are done, then tick one more.","t7":"As director: choose a pilot decision, write a reason and save it.","t.pay":"Would you pay 80,000 ₸ a month after a free 30-day pilot?","t.useShort":"Use or pay","t.pickRole":"Choose the participant's role to see the tasks.","t.dirPrep":"Before a director session, the analyst must close at least one ticket for this participant's clinic code, so the summary is not empty.","t.save":"Save test record","t.export":"Export test records (CSV)","t.list":"Saved test records","t.saved":"Test record saved",
+"t.start":"Start","t.done":"Done","t.help":"Done with help","t.fail":"Not done","t.errors":"Errors","t.ease":"Ease (1 = very hard, 5 = very easy)","t.use":"Would use it at work?","t.comment":"What was confusing? Write the participant's words","t6":"As director: find how many readiness checklist items are done, then tick one more.","t7":"As director: choose a pilot decision, write a reason and save it.","t.pay":"Would you pay 80,000 ₸ a month after a free 30-day pilot?","t.useShort":"Use or pay","t.pickRole":"Choose the participant's role to see the tasks.","t.dirPrep":"Before a director session, the analyst must close at least one ticket for this participant's clinic code, so the summary is not empty.","saving":"Saving…","err.reason":"Write the main reason for your decision.","promise":"Qorǵan calls you back within 15 minutes, 08:00 to 20:00 on working days.","youAre":"You are","t.save":"Save test record","t.export":"Export test records (CSV)","t.list":"Saved test records","t.saved":"Test record saved",
 "err.consent":"Consent is required before the test.","err.pcode":"Use a code like P01.","err.tasks":"Record a result for at least one task.","t.empty":"No test records yet.",
 "mode.shared":"Shared mode: everyone who opens this link sees the same tickets.","mode.local":"Private demo mode: data is saved only in this browser. Open a second tab as analyst to see live updates.",
 "mode.connecting":"Connecting to the shared database…","mode.cloudFail":"The shared database could not be reached, so data is saved only in this browser for now. Check the internet connection and reload.","mode.switched":"Shared saving is not allowed for this viewer, so the desk switched to private demo mode in this browser.",
@@ -210,7 +211,7 @@ print:"Print or save as PDF",exportTickets:"Export tickets (CSV)",
 },
 kk:{
 tagline:"Клиникаңыздың IT мәселелеріне жауапты бір байланыс",bigText:"Үлкен мәтін",langSwitch:"English","nav.switch":"Рөлді ауыстыру",
-footer:"Қорытынды емтихан MVP, 2.0 нұсқасы. Qorǵan IT мәселелері мен жеткізушілерді үйлестіреді. Пациент деректерін сақтамайды.",
+footer:"Қорытынды емтихан MVP, 2.1 нұсқасы. Qorǵan IT мәселелері мен жеткізушілерді үйлестіреді. Пациент деректерін сақтамайды.",
 "start.title":"Жүйені кім қолданады?","start.lead":"Рөліңізді таңдаңыз. Әр рөл тек өзіне керегін көреді.",
 "role.admin":"Клиника әкімшісі","role.admin.d":"Мәселе туралы хабарлап, ол шешілгенше бақылаңыз.",
 "role.analyst":"Qorǵan маманы","role.analyst.d":"Кері қоңырау шалу, жеткізушімен үйлестіру, шешімді тіркеу.",
@@ -253,7 +254,7 @@ print:"Басып шығару немесе PDF сақтау",exportTickets:"Ө�
 "t.lead":"Бір уақытта бір қатысушымен өткізіңіз. Алдымен келісім мәтінін дауыстап оқыңыз.","t.code":"Қатысушы коды","t.role":"Қатысушының рөлі","t.r.admin":"Әкімші","t.r.director":"Директор","t.r.staff":"Клиниканың басқа қызметкері",
 "t.consent":"Қатысушы қатысуға келісті және аты-жөні мен клиникасы жарияланбайтынын біледі.","t.tasks":"Тапсырмалар",
 "t1":"Хабарлаңыз: бүкіл клиникада интернет жоқ, пациенттер күтіп тұр.","t2":"Өтінішіңіздің күйін тауып, маманның жазбасын оқыңыз.","t3":"Мәселенің шешілгенін растап, стресс деңгейін бағалаңыз.","t4":"Тілді ауыстырып, Qorǵan қанша уақыт ішінде кері қоңырау шалуға уәде беретінін табыңыз.","t5":"Директор ретінде: қалпына келтірудің медиана уақытын және қайталанған мәселелерді табыңыз.",
-"t.start":"Бастау","t.done":"Орындалды","t.help":"Көмекпен орындалды","t.fail":"Орындалмады","t.errors":"Қателер","t.ease":"Жеңілдігі, 1 қиын – 5 оңай","t.use":"Жұмыста қолданар ма еді?","t.comment":"Не түсініксіз болды? Қатысушының сөзін жазыңыз","t6":"Директор ретінде: дайындық тізімінде қанша тармақ орындалғанын тауып, тағы біреуін белгілеңіз.","t7":"Директор ретінде: пилот бойынша шешімді таңдап, себебін жазып, сақтаңыз.","t.pay":"Тегін 30 күндік пилоттан кейін айына 80 000 ₸ төлер ме едіңіз?","t.useShort":"Қолдану не төлеу","t.pickRole":"Тапсырмаларды көру үшін қатысушының рөлін таңдаңыз.","t.dirPrep":"Директормен тест алдында маман осы қатысушының клиника коды бойынша кемінде бір өтінішті жабуы керек, сонда есеп бос болмайды.","t.save":"Тест жазбасын сақтау","t.export":"Тест жазбаларын экспорттау (CSV)","t.list":"Сақталған тест жазбалары","t.saved":"Тест жазбасы сақталды",
+"t.start":"Бастау","t.done":"Орындалды","t.help":"Көмекпен орындалды","t.fail":"Орындалмады","t.errors":"Қателер","t.ease":"Жеңілдігі (1 = өте қиын, 5 = өте оңай)","t.use":"Жұмыста қолданар ма еді?","t.comment":"Не түсініксіз болды? Қатысушының сөзін жазыңыз","t6":"Директор ретінде: дайындық тізімінде қанша тармақ орындалғанын тауып, тағы біреуін белгілеңіз.","t7":"Директор ретінде: пилот бойынша шешімді таңдап, себебін жазып, сақтаңыз.","t.pay":"Тегін 30 күндік пилоттан кейін айына 80 000 ₸ төлер ме едіңіз?","t.useShort":"Қолдану не төлеу","t.pickRole":"Тапсырмаларды көру үшін қатысушының рөлін таңдаңыз.","t.dirPrep":"Директормен тест алдында маман осы қатысушының клиника коды бойынша кемінде бір өтінішті жабуы керек, сонда есеп бос болмайды.","saving":"Сақталуда…","err.reason":"Шешіміңіздің негізгі себебін жазыңыз.","promise":"Qorǵan жұмыс күндері 08:00–20:00 аралығында 15 минут ішінде кері қоңырау шалады.","youAre":"Сіз","t.save":"Тест жазбасын сақтау","t.export":"Тест жазбаларын экспорттау (CSV)","t.list":"Сақталған тест жазбалары","t.saved":"Тест жазбасы сақталды",
 "err.consent":"Тест алдында келісім қажет.","err.pcode":"P01 түріндегі кодты пайдаланыңыз.","err.tasks":"Кемінде бір тапсырманың нәтижесін жазыңыз.","t.empty":"Әзірге тест жазбалары жоқ.",
 "mode.shared":"Ортақ режим: осы сілтемені ашқандардың бәрі бірдей өтініштерді көреді.","mode.local":"Жеке демо режимі: деректер тек осы браузерде сақталады. Жаңартуларды көру үшін екінші қойындыны маман ретінде ашыңыз.",
 "mode.connecting":"Ортақ дерекқорға қосылуда…","mode.cloudFail":"Ортақ дерекқорға қосылу мүмкін болмады, сондықтан деректер әзірге тек осы браузерде сақталады. Интернетті тексеріп, бетті қайта жүктеңіз.","mode.switched":"Бұл қолданушыға ортақ сақтауға рұқсат жоқ, сондықтан жүйе осы браузердегі жеке демо режиміне ауысты.",
@@ -367,6 +368,7 @@ function applyChrome(){
   document.querySelectorAll("[data-i18n]").forEach(el=>el.textContent=t(el.dataset.i18n));
   const lb=document.getElementById("langBtn");lb.textContent=t("langSwitch");lb.setAttribute("aria-label",lang==="kk"?"Switch to English":"Қазақ тіліне ауысу");
   document.getElementById("roleBtn").hidden=!S.role;
+  const rc=document.getElementById("roleChip");rc.hidden=!S.role;rc.textContent=S.role?t("youAre")+": "+t(S.role==="tester"?"role.test":"role."+S.role)+(S.clinic&&S.role!=="analyst"&&S.role!=="tester"?" · "+S.clinic:""):"";
   const tabs=document.getElementById("tabs"),list=document.getElementById("tabList");list.textContent="";
   tabs.hidden=!S.role;
   if(S.role){for(const k of TABS[S.role]){list.append(h("button",{type:"button","aria-current":S.tab===k?"page":null,onclick:()=>{S.tab=k;persistSession();render();document.getElementById("view").focus?.()}},t("nav."+k)))}}
@@ -453,7 +455,7 @@ function viewReport(){
   card.append(q("stress",t("q.stress"),h("div",null,radioGroup("stress",[1,2,3,4,5].map(n=>[n,String(n)]),d.stress,v=>{d.stress=Number(v)}),h("p",{class:"hint"},t("stress.low")+" · "+t("stress.high")))));
   const saveErr=h("p",{class:"err",role:"alert"});
   const btn=h("button",{type:"button",class:"btn",id:"submitBtn",onclick:submit},t("submit"));
-  card.append(h("div",{class:"row",style:"margin-top:16px"},btn),saveErr);
+  card.append(h("p",{class:"notice n-info",style:"margin-top:16px"},t("promise")),h("div",{class:"row"},btn),saveErr);
   box.append(card);
   async function submit(){
     S.flash=null;let first=null;Object.values(errs).forEach(e=>e.textContent="");
@@ -593,8 +595,8 @@ function viewSummary(){
   box.append(h("div",{class:"card"},h("h2",{style:"margin-top:0"},t("dec.title")),
     radioGroup("dec",["continue","more","stop"].map(k=>[k,t("dec."+k)]),dd.v,v=>dd.v=v),
     h("label",{for:"decReason"},t("dec.reason")),rin,derr,
-    h("div",{class:"row noprint",style:"margin-top:12px"},h("button",{type:"button",class:"btn",onclick:async()=>{if(!dd.v){derr.textContent=t("err.required");return}
-      try{await Store.put("meta","clinic_"+S.clinic,Object.assign({},meta,{decision:{v:dd.v,reason:dd.reason.trim(),at:now()}}));announce(t("dec.saved"))}catch(e){derr.textContent=t("err.save")}}},t("dec.save"))),
+    h("div",{class:"row noprint",style:"margin-top:12px"},h("button",{type:"button",class:"btn",onclick:async()=>{if(!dd.v){derr.textContent=t("err.required");return}if(dd.reason.trim().length<3){derr.textContent=t("err.reason");rin.setAttribute("aria-invalid","true");rin.focus();return}if(S.saving)return;S.saving=true;
+      try{await Store.put("meta","clinic_"+S.clinic,Object.assign({},meta,{decision:{v:dd.v,reason:dd.reason.trim(),at:now()}}));announce(t("dec.saved"))}catch(e){derr.textContent=t("err.save")}finally{S.saving=false}}},t("dec.save"))),
     dec.at?h("p",{class:"meta"},t("dec.saved")+": "+fmtTime(dec.at)+" · "+t("dec."+dec.v)):null));
   box.append(h("div",{class:"row noprint"},h("button",{type:"button",class:"btn secondary",onclick:()=>window.print()},t("print")),
     h("button",{type:"button",class:"btn secondary",onclick:()=>exportCsv("qorgan_tickets_"+S.clinic+".csv",ticketRows(T))},t("exportTickets"))));
@@ -653,15 +655,16 @@ function viewTest(){
   const cm=h("textarea",{id:"pcomm",maxlength:"500",oninput:e=>d.comment=e.target.value});cm.value=d.comment;
   box.append(h("div",{class:"card"},h("fieldset",{style:"margin-top:0"},h("legend",null,t(d.role==="director"?"t.pay":"t.use")),radioGroup("puse",[["yes",t("yes")],["maybe",t("maybe")],["no",t("no")]],d.use,v=>d.use=v)),
     h("label",{for:"pcomm"},t("t.comment")),cm,err,
-    h("div",{class:"row",style:"margin-top:12px"},h("button",{type:"button",class:"btn",onclick:save},t("t.save")))));
-  async function save(){err.textContent="";
+    h("div",{class:"row",style:"margin-top:12px"},h("button",{type:"button",class:"btn",disabled:!!S.saving,onclick:save},t(S.saving?"saving":"t.save")))));
+  async function save(){err.textContent="";if(S.saving)return;
     if(!/^P\d{2}$/.test(d.code)){err.textContent=t("err.pcode");code.focus();return}
     if(!d.consent){err.textContent=t("err.consent");return}
     if(!d.role){err.textContent=t("err.required");return}
     if(!SET.some(k=>d.tasks[k]&&d.tasks[k].result)){err.textContent=t("err.tasks");return}
     const rec={code:d.code,role:d.role,at:now(),lang,use:d.use,comment:d.comment.trim().slice(0,500),tasks:{}};
     SET.forEach(k=>{const r=d.tasks[k];if(r&&r.result)rec.tasks[k]={result:r.result,sec:r.end&&r.start?Math.round((r.end-r.start)/1000):null,errors:r.errors,ease:r.ease||null}});
-    try{await Store.put("tests",d.code+"-"+now().toString(36),rec);S.testDraft=null;setFlash("t.saved");render()}catch(e){err.textContent=t("err.save")}}
+    S.saving=true;render();
+    try{await Store.put("tests",d.code+"-"+now().toString(36),rec);S.testDraft=null;setFlash("t.saved")}catch(e){err.textContent=t("err.save")}finally{S.saving=false;render()}}
   const recs=Store.list("tests").sort((a,b)=>a.at-b.at);
   box.append(h("h2",null,t("t.list")));
   if(!recs.length)box.append(h("p",{class:"card"},t("t.empty")));
