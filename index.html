@@ -258,7 +258,7 @@ print:"Басып шығару немесе PDF сақтау",exportTickets:"Ө�
 "mode.shared":"Ортақ режим: осы сілтемені ашқандардың бәрі бірдей өтініштерді көреді.","mode.local":"Жеке демо режимі: деректер тек осы браузерде сақталады. Жаңартуларды көру үшін екінші қойындыны маман ретінде ашыңыз.",
 "mode.connecting":"Ортақ дерекқорға қосылуда…","mode.cloudFail":"Ортақ дерекқорға қосылу мүмкін болмады, сондықтан деректер әзірге тек осы браузерде сақталады. Интернетті тексеріп, бетті қайта жүктеңіз.","mode.switched":"Бұл қолданушыға ортақ сақтауға рұқсат жоқ, сондықтан жүйе осы браузердегі жеке демо режиміне ауысты.",
 "help.title":"Qorǵan қалай жұмыс істейді",
-"help.1":"Әкімші мәселе туралы бір минуттан аз уақытта хабарлайды. Пішін тек маманға керек сұрақтарды қояды.",
+"help.1":"Әкімші мәселе туралы бір минуттан аз уақытта хабарлайды. Сауалнама тек маманға керек сұрақтарды қояды.",
 "help.2":"Qorǵan маманы жұмыс уақытында 15 минут ішінде кері қоңырау шалады, жауапты жеткізушіні табады және мәселе шешілгенше бақылайды.",
 "help.3":"Әкімші шешімді растап, стресс деңгейін бағалайды. Директор ай сайын өлшенген жауап беру және қалпына келтіру уақытын көреді.",
 "help.bound":"Қызмет шектері","help.b1":"Qorǵan үйлестіреді. Жеткізушілер өз жүйелерін келісімшарт бойынша жөндейді.","help.b2":"Кері қоңырау мақсаты: жұмыс күндері 08:00–20:00 аралығында 90% жағдайда 15 минут ішінде.","help.b3":"Qorǵan ешқашан пациент деректерін сұрамайды және сақтамайды.","help.b4":"Жауапкершілік айлық төлеммен шектеледі. Толығырақ қызмет көрсету шартында.",
@@ -267,7 +267,7 @@ print:"Басып шығару немесе PDF сақтау",exportTickets:"Ө�
 "ch.2":"Өлшенетін көрсеткіштер: кері қоңырау, қалпына келтіру уақыты, қайталанған мәселелер және тоқтау уақыты өтініш уақыттарынан есептеледі.",
 "ch.3":"Әр мәселеге дейін және кейін стресс бағаланады, бұл клиент жолының эмоциялық жағын өлшейді.",
 "ch.4":"Әр экранда қазақ және ағылшын тілдері, жарық бөлмеге арналған үлкен мәтін режимі.",
-"ch.5":"Құпиялылық қорғанысы: пішін ЖСН-ге ұқсайтын 12 таңбалы сандарды қабылдамайды."
+"ch.5":"Құпиялылық қорғанысы: сауалнама ЖСН-ге ұқсайтын 12 таңбалы сандарды қабылдамайды."
 }};
 const CATS=["internet","mis","device","phone","account","other"];
 const SCOPES=["one","dept","all"];
@@ -347,6 +347,8 @@ const Store={mode:"local",data:{tickets:{},vendors:{},meta:{},tests:{}},db:null,
 /* ---------- app state ---------- */
 const S={role:null,clinic:null,tab:null,includeSample:true,draft:{},testDraft:null,flash:null,openNote:{}};
 try{const saved=JSON.parse(ls.get("q_session")||"null");if(saved&&saved.role){S.role=saved.role;S.clinic=saved.clinic;S.tab=saved.tab}}catch(e){}
+function setFlash(k){S.flash={k,until:now()+15000}}
+function flashText(){return S.flash&&now()<S.flash.until?t(S.flash.k):null}
 function persistSession(){ls.set("q_session",JSON.stringify({role:S.role,clinic:S.clinic,tab:S.tab}))}
 const TABS={admin:["report","mine","map","help"],analyst:["queue","map","help"],director:["summary","map","help"],tester:["test","help"]};
 const now=()=>Date.now();
@@ -430,7 +432,7 @@ function radioGroup(name,opts,cur,onch){
 function viewReport(){
   const d=S.draft;const box=h("div");
   box.append(h("h1",null,t("nav.report")));
-  if(S.flash){box.append(h("p",{class:"notice n-ok",role:"status"},S.flash));}
+  if(flashText()){box.append(h("p",{class:"notice n-ok",role:"status"},flashText()));}
   box.append(h("p",{class:"notice n-warn"},t("privacy")));
   const card=h("div",{class:"card"});const errs={};
   function q(key,legend,control){const e=h("p",{class:"err",id:"e_"+key});errs[key]=e;return h("fieldset",null,h("legend",null,legend),control,e)}
@@ -467,7 +469,7 @@ function viewReport(){
     const created=now();
     const recurring=Store.list("tickets").some(x=>x.clinic===S.clinic&&x.cat===d.cat&&x.createdAt<created&&created-x.createdAt<30*DAY);
     const tk={clinic:S.clinic,cat:d.cat,scope:d.scope,patients:d.patients==="yes",vendor:d.vendor||"",desc,contact,stressBefore:d.stress,createdAt:created,status:"new",notes:[],recurring,sample:false};
-    try{await Store.put("tickets",newId("Q"),tk);S.draft={};S.flash=t("sent");S.tab="mine";persistSession();render();announce(t("sent"))}
+    try{await Store.put("tickets",newId("Q"),tk);S.draft={};setFlash("sent");S.tab="mine";persistSession();render();announce(t("sent"))}
     catch(e){btn.disabled=false;saveErr.textContent=t("err.save")}
   }
   return box;
@@ -485,7 +487,7 @@ function ticketHead(tk){return [h("div",{class:"row"},statusPill(tk.status),tk.r
 
 function viewMine(){
   const box=h("div");box.append(h("h1",null,t("nav.mine")));
-  if(S.flash){box.append(h("p",{class:"notice n-ok",role:"status"},S.flash));S.flash=null}
+  if(flashText()){box.append(h("p",{class:"notice n-ok",role:"status"},flashText()))}
   const list=Store.list("tickets").filter(x=>x.clinic===S.clinic).sort((a,b)=>b.createdAt-a.createdAt);
   if(!list.length){box.append(h("p",{class:"card"},t("mine.empty")));return box}
   list.forEach(tk=>{const c=h("article",{class:"card ticket","aria-label":tk.id});c.append(...ticketHead(tk),timeline(tk));const nl=notesList(tk);if(nl)c.append(nl);
@@ -515,7 +517,7 @@ function viewQueue(){
     h("button",{type:"button",class:"btn secondary",onclick:loadSample},t("demo.load")),
     all.some(x=>x.sample)?h("button",{type:"button",class:"btn secondary",onclick:clearSample},t("demo.clear")):null);
   box.append(tools);
-  if(S.flash){box.append(h("p",{class:"notice n-sample",role:"status"},S.flash));S.flash=null}
+  if(flashText()){box.append(h("p",{class:"notice n-sample",role:"status"},flashText()))}
   if(!open.length)box.append(h("p",{class:"card"},t("queue.empty")));
   open.forEach(tk=>{const c=h("article",{class:"card ticket"});c.append(...ticketHead(tk));
     c.append(h("p",{class:"meta"},t("waiting")+": "+fmtMin(mins(tk.createdAt,now()))+" · "+t("q.stress")+" "+tk.stressBefore),timeline(tk));
@@ -543,7 +545,7 @@ async function loadSample(){
     ["internet","all",true,"Internet provider","Internet down again after rain.",11],["account","one",false,"","Doctor cannot log in to email.",14],["mis","dept",true,"MIS vendor","Lab results not appearing in MIS.",18]];
   for(let i=0;i<plan.length;i++){const[cat,scope,pat,vendor,desc,day]=plan[i];const c=base+day*DAY+r(9,16)*36e5;const ack=c+r(4,20)*6e4;const res=ack+r(25,240)*6e4;
     await Store.put("tickets",newId("S"),{clinic:"QOR-01",cat,scope,patients:pat,vendor,desc:desc+" [sample]",contact:"Reception desk",stressBefore:r(3,5),createdAt:c,ackAt:ack,vendorAt:vendor?ack+5*6e4:null,restoredAt:res,closedAt:res+10*6e4,status:"closed",notes:[],recurring:i===3||i===5,stressAfter:r(1,3),speed:["faster","same","faster"][i%3],sample:true})}
-  S.flash=t("demo.done");render()}
+  setFlash("demo.done");render()}
 async function clearSample(){for(const x of Store.list("tickets").filter(x=>x.sample))await Store.del("tickets",x.id);render()}
 
 function viewSummary(){
@@ -623,13 +625,12 @@ function viewHelp(){
   const ul=(...k)=>h("ul",null,k.map(x=>h("li",null,t(x))));
   return h("div",null,h("h1",null,t("help.title")),h("div",{class:"card"},h("ol",null,["help.1","help.2","help.3"].map(k=>h("li",null,t(k))))),
     h("div",{class:"card"},h("h2",{style:"margin-top:0"},t("help.bound")),ul("help.b1","help.b2","help.b3","help.b4")),
-    h("div",{class:"card"},h("h2",{style:"margin-top:0"},t("help.changes")),ul("ch.1","ch.2","ch.3","ch.4","ch.5")),
     h("p",{class:"hint"},t("demoNote")))}
 
 function viewTest(){
   if(!S.testDraft)S.testDraft={code:"",role:"",consent:false,tasks:{},use:"",comment:""};
   const d=S.testDraft;const box=h("div");box.append(h("h1",null,t("role.test")),h("p",null,t("t.lead")));
-  if(S.flash){box.append(h("p",{class:"notice n-ok",role:"status"},S.flash));S.flash=null}
+  if(flashText()){box.append(h("p",{class:"notice n-ok",role:"status"},flashText()))}
   const err=h("p",{class:"err",role:"alert"});
   const code=h("input",{id:"pcode",type:"text",maxlength:"4",placeholder:"P01",value:d.code,oninput:e=>d.code=e.target.value.toUpperCase().trim()});
   const card=h("div",{class:"card"},h("label",{for:"pcode",style:"margin-top:0"},t("t.code")),code,
@@ -656,7 +657,7 @@ function viewTest(){
     if(!TASKS.some(k=>d.tasks[k]&&d.tasks[k].result)){err.textContent=t("err.tasks");return}
     const rec={code:d.code,role:d.role,at:now(),lang,use:d.use,comment:d.comment.trim().slice(0,500),tasks:{}};
     TASKS.forEach(k=>{const r=d.tasks[k];if(r&&r.result)rec.tasks[k]={result:r.result,sec:r.end&&r.start?Math.round((r.end-r.start)/1000):null,errors:r.errors,ease:r.ease||null}});
-    try{await Store.put("tests",d.code+"-"+now().toString(36),rec);S.testDraft=null;S.flash=t("t.saved");render()}catch(e){err.textContent=t("err.save")}}
+    try{await Store.put("tests",d.code+"-"+now().toString(36),rec);S.testDraft=null;setFlash("t.saved");render()}catch(e){err.textContent=t("err.save")}}
   const recs=Store.list("tests").sort((a,b)=>a.at-b.at);
   box.append(h("h2",null,t("t.list")));
   if(!recs.length)box.append(h("p",{class:"card"},t("t.empty")));
@@ -670,6 +671,7 @@ function viewTest(){
 render();
 Store.init().then(render).catch(()=>render());
 setInterval(()=>{if(S.tab==="queue")render()},30000);
+setInterval(()=>{if(S.flash&&now()>=S.flash.until){S.flash=null;render()}},1000);
 </script>
 </body>
 </html>
